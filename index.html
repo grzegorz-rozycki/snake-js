@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HTML Canvas</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+    </head>
+    <body>
+        <div id="head-wrapper"></div>
+        <div id="canvas-container" class="container">
+            <canvas id="canvas" width="800" height="400">
+                Your browser doesn't support the canvas element...
+            </canvas>
+        </div>
+        <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript">
+            'use strict';
+            // the method to load js is only for development, for deployment:
+            // - pack the whole js code inside a single file
+            // - use loadAsync function
+            // window.onload = function () {loadAsync...};
+            function loadAsync(url, callback) {
+                'use strict';
+                var scriptElement = document.createElement("script"),
+                    dst = document.body;
+                url = encodeURI(url);
+                scriptElement.type = "text/javascript";
+                scriptElement.async = "true";
+                if (typeof callback === "function") {
+                    scriptElement.onload = callback;
+                }
+                dst.appendChild(scriptElement);
+                scriptElement.src = url;
+            }
+
+        </script>
+    </body>
+</html>
