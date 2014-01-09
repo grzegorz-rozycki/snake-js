@@ -35,8 +35,8 @@
             }
 
             try {
-                GRAPHICS.init(CONF.canvasName);
-                GRAPHICS.loadAssets(CONF.assets);
+                GRAPHICS.init();
+                GRAPHICS.draw();
             } catch (error) {
                 console.error(error.name + ': ' + error.message);
             }

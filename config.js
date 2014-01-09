@@ -1,13 +1,11 @@
 'use strict';
 // global variable config
 var CONF = Object.create(null);
-CONF.canvasName = 'canvas';
-CONF.fps = Math.floor(1000 / 60);
-CONF.assets = [
-    {
-        "name": "pacman",
-        "tape": "path",
-        "frames": [
-        ]
-    }
-];
+CONF.canvasName = 'canvas';     // id of canvas element to draw to
+CONF.tileSize = 20;             // size of tile in pixels
+CONF.mapHeight = 20;            // game map height in tiles; pixels = tileSize * mapHeight
+CONF.mapWidth = 40;             // game map width in tiles; pixels = tileSize * mapWidth
+CONF.initLength = 5;            // initial length of the snake in tiles
+CONF.ppf = 5;                   // points per fruit collected by snake
+CONF.speed = 1;                 // snake movement speed [i.e. how many frames skip before move by a tile]
+CONF.fps = Math.floor(1000 / 60);// framerate [well, if we'll skip on using getNextAnimationFrame]
