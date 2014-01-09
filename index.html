@@ -14,20 +14,22 @@
         </div>
         <script type="text/javascript" src="config.js"></script>
         <script type="text/javascript" src="graphics.js"></script>
+        <script type="text/javascript" src="controls.js"></script>
         <script type="text/javascript">
             'use strict';
+            var CANVAS = null;
             // the method to load js is only for development, for deployment:
             // - pack the whole js code inside a single file
             // - use loadAsync function
             // window.onload = function () {loadAsync...};
             function loadAsync(url, callback) {
                 'use strict';
-                var scriptElement = document.createElement("script"),
+                var scriptElement = document.createElement('script'),
                     dst = document.body;
                 url = encodeURI(url);
-                scriptElement.type = "text/javascript";
-                scriptElement.async = "true";
-                if (typeof callback === "function") {
+                scriptElement.type = 'text/javascript';
+                scriptElement.async = 'true';
+                if (typeof callback === 'function') {
                     scriptElement.onload = callback;
                 }
                 dst.appendChild(scriptElement);
@@ -35,8 +37,17 @@
             }
 
             try {
+                CANVAS = document.getElementById(CONF.canvasName);
                 GRAPHICS.init();
-                GRAPHICS.draw();
+                CONTROLS.init();
+                //GRAPHICS.draw();
+                CANVAS.addEventListener('blur', function () {
+                    console.log('CANVAS lost focus');
+                });
+                CANVAS.addEventListener('focus', function () {
+                    console.log('CANVAS gained focus');
+                });
+                CANVAS.focus();
             } catch (error) {
                 console.error(error.name + ': ' + error.message);
             }

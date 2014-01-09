@@ -1,10 +1,9 @@
 var GRAPHICS = (function () {
     'use strict';
     // private:
-    var canvas = null,
-        API = Object.create(null),
-        canvasW = null,
-        canvasH = null,
+    var API = Object.create(null),
+        //canvasW = null, meybe to automatically determine the tile size
+        //canvasH = null,
         ctx = null;
 
     // helper functions
@@ -67,12 +66,8 @@ var GRAPHICS = (function () {
     // add public methods
     API.init = function () {
         var ans;
-        canvas = document.getElementById(CONF.canvasName);
-        if (canvas) {
-            canvasH = canvas.height;
-            canvasW = canvas.width;
-            ctx = canvas.getContext('2d');
-            console.log('OK', canvasW, canvasH);
+        if (CANVAS) {
+            ctx = CANVAS.getContext('2d');
         } else {
             throw new Error('GRAPHICS.init: no element with id=' + CONF.canvasName);
         }
