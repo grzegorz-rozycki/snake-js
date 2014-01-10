@@ -26,7 +26,6 @@ var CONTROLS = function () {
             }
         },
         getActions: function () {
-            console.log(actions);
             return actions;
         },
         init: function () {
@@ -34,7 +33,6 @@ var CONTROLS = function () {
                 // append listeners:
                 CANVAS.addEventListener("keydown", CONTROLS.keyDownEventHandler);
                 CANVAS.addEventListener("keyup", CONTROLS.keyUpEventHandler);
-                CANVAS.addEventListener("click", CONTROLS.getActions);
                 // standard key setup / bindings:
                 CONTROLS.bindKey(65, "w");  // a key
                 CONTROLS.bindKey(68, "e");  // d key
