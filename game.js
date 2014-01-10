@@ -42,7 +42,7 @@ var GAME = (function () {
             CANVAS.addEventListener('focus', function () {
                 //console.log('CANVAS gained focus');
             });
-            CANVAS.focus();
+            //CANVAS.focus();
             tE = Date.now();
             console.log('GAME INIT TOOK: ' + (tE - tS) + '[ms]');
             GAME.play();
