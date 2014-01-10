@@ -2,8 +2,10 @@ var GRAPHICS = (function () {
     'use strict';
     // private:
     var API = Object.create(null),
-        //canvasW = null, meybe to automatically determine the tile size
-        //canvasH = null,
+        backgroundColor = '#BDBDBD',
+        borderColor = '#424242',
+        fruitColor = '#FE1506',
+        snakeColor = '#2D9424',
         ctx = null;
 
     // helper functions
@@ -25,7 +27,7 @@ var GRAPHICS = (function () {
         var i = null,
             l = null;
         ctx.save();
-        ctx.fillStyle = '#2D9424';
+        ctx.fillStyle = snakeColor;
         for (i = 0, l = body.length; i < l; i += 1) {
             drawTile(body[i][0], body[i][1]);
         }
@@ -33,7 +35,7 @@ var GRAPHICS = (function () {
     }
     function drawFriut(x, y) {
         ctx.save();
-        ctx.fillStyle = '#FE1506';
+        ctx.fillStyle = fruitColor;
         drawTile(x, y);
         ctx.restore();
     }
@@ -42,7 +44,7 @@ var GRAPHICS = (function () {
             t = null;
         ctx.save();
         // borders
-        ctx.fillStyle = '#424242';
+        ctx.fillStyle = borderColor;
         ctx.fillRect(
             0,
             0,
@@ -50,7 +52,7 @@ var GRAPHICS = (function () {
             CONF.mapHeight * CONF.tileSize
         );
         // background
-        ctx.fillStyle = '#BDBDBD';
+        ctx.fillStyle = backgroundColor;
         ctx.fillRect(
             CONF.tileSize,
             CONF.tileSize,
@@ -65,7 +67,6 @@ var GRAPHICS = (function () {
     }
     // add public methods
     API.init = function () {
-        var ans;
         if (CANVAS) {
             ctx = CANVAS.getContext('2d');
         } else {
