@@ -61,10 +61,6 @@ var GRAPHICS = (function () {
         );
         ctx.restore();
     }
-    // constructor: check if variable CONF is defined as an object
-    if (typeof CONF !== "object") {
-        throw new TypeError('GRAPHICS: CONF must be defined as an object');
-    }
     // add public methods
     API.init = function () {
         if (CANVAS) {
@@ -74,16 +70,9 @@ var GRAPHICS = (function () {
         }
     };
     API.draw = function () {
-        var body = [
-            // L spahed snake body
-            [3, 3],
-            [3, 4],
-            [4, 4],
-            [5, 4]
-        ];
         drawMap();
-        drawFriut(8, 5);
-        drawSnake(body);
+        drawFriut(PHYSICS.getFruit());
+        drawSnake(PHYSICS.getSnake());
     };
 
     // freeze [if possible] and make the API public:
