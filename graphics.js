@@ -17,10 +17,10 @@ var GRAPHICS = (function () {
     }
     function drawTile(x, y) {
         ctx.fillRect(
-            x * CONF.tileSize,
-            y * CONF.tileSize,
-            CONF.tileSize,
-            CONF.tileSize
+            x * CONF.tileSize + 1,
+            y * CONF.tileSize + 1,
+            CONF.tileSize - 1,
+            CONF.tileSize -1
         );
     }
     function drawSnake(body) {
