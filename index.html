@@ -37,6 +37,7 @@
                 dst.appendChild(scriptElement);
                 scriptElement.src = url;
             }
+            // window.onload = function () { loadAsync('compressed-js', function () { on-load-callback; }); };
             window.onload = function () {
                 GAME.init();
             };

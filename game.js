@@ -4,6 +4,7 @@ var GAME = (function () {
         run = null,
         tS = null,
         tE = null;
+    // contructor
     // check if all modules are available:
     if (
         typeof GRAPHICS !== "object" ||
@@ -14,7 +15,11 @@ var GAME = (function () {
         //console.log(typeof GRAPHICS, typeof CONTROLS, typeof PHYSICS , typeof CONF);
         throw new Error('GAME: missing one of modules/objects [GRAPHICS, CONTROLS, PHYSICS, CONF]');
     }
-
+    // private functions:
+    function step() {
+        PHYSICS.step();
+    }
+    // public API:
     API.init = function () {
         try {
             tS = Date.now();
@@ -29,6 +34,7 @@ var GAME = (function () {
             }
             GRAPHICS.init();
             CONTROLS.init();
+            PHYSICS.init();
             GRAPHICS.draw();
             CANVAS.addEventListener('blur', function () {
                 //console.log('CANVAS lost focus');
@@ -39,9 +45,29 @@ var GAME = (function () {
             CANVAS.focus();
             tE = Date.now();
             console.log('GAME INIT TOOK: ' + (tE - tS) + '[ms]');
+            GAME.play();
         } catch (error) {
             console.error(error.name + ': ' + error.message);
         }
+    },
+    API.pause = function () {
+        if (run !== null) {
+            clearInterval(run);
+            run = null;
+        }
+    };
+    API.play = function () {
+        if (run === null) {
+            run = setInterval(step, CONF.fps);
+        }
+    };
+    API.toggle = function () {
+        if (run) {
+            API.pause();
+        } else {
+            API.play();
+        }
     }
+    //API.end = function () {};
     return Object.freeze(API);
 } ());

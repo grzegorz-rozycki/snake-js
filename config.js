@@ -9,4 +9,4 @@ CONF.initLength = 5;            // initial length of the snake in tiles
 CONF.initPosition = [1,1];      // position to place snake at the begining; in tiles
 CONF.ppf = 5;                   // points per fruit collected by snake
 CONF.speed = 1;                 // snake movement speed [i.e. how many frames skip before move by a tile]
-CONF.fps = Math.floor(1000 / 60);// framerate 60Hz [well, if we'll skip on using getNextAnimationFrame]
+CONF.fps = Math.floor(1000 / 1);// framerate 60Hz [well, if we'll skip on using getNextAnimationFrame]
