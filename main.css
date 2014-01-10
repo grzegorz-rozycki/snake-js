@@ -22,8 +22,13 @@ a:hover {
 a:active {}
 
 canvas {
+    display: block;
     border: solid 1px #555;
     background: #ddd;
+    box-shadow: 0 0 10px 1px #555;
+}
+canvas:active, canvas:focus {
+    box-shadow: 0 0 10px 3px #555;
 }
 .container, canvas {
     position: relative;
