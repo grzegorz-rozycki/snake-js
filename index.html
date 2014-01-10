@@ -9,7 +9,6 @@
         <div id="head-wrapper"></div>
         <div id="canvas-container" class="container">
             <canvas id="canvas" width="800" height="400" tabindex="0">
-            <canvas id="canvas" width="800" height="400">
                 Your browser doesn't support the canvas element...
             </canvas>
         </div>
@@ -36,22 +35,28 @@
                 dst.appendChild(scriptElement);
                 scriptElement.src = url;
             }
-
-            try {
-                CANVAS = document.getElementById(CONF.canvasName);
-                GRAPHICS.init();
-                CONTROLS.init();
-                //GRAPHICS.draw();
-                CANVAS.addEventListener('blur', function () {
-                    console.log('CANVAS lost focus');
-                });
-                CANVAS.addEventListener('focus', function () {
-                    console.log('CANVAS gained focus');
-                });
-                CANVAS.focus();
-            } catch (error) {
-                console.error(error.name + ': ' + error.message);
-            }
+            window.onload = function () {
+                var tS = null,
+                    tE = null;
+                try {
+                    tS = Date.now();
+                    CANVAS = document.getElementById(CONF.canvasName);
+                    GRAPHICS.init();
+                    CONTROLS.init();
+                    GRAPHICS.draw();
+                    CANVAS.addEventListener('blur', function () {
+                        //console.log('CANVAS lost focus');
+                    });
+                    CANVAS.addEventListener('focus', function () {
+                        //console.log('CANVAS gained focus');
+                    });
+                    CANVAS.focus();
+                    tE = Date.now();
+                    console.log('GAME INIT TOOK: ' + (tE - tS) + '[ms]');
+                } catch (error) {
+                    console.error(error.name + ': ' + error.message);
+                }
+            };
         </script>
     </body>
 </html>
