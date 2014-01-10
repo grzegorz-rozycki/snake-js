@@ -1,55 +1,54 @@
 var CONTROLS = function () {
     'use strict';
     // private members:
-    var actions = {     // posible actions in game
-        "move-left" : false,
-        "move-right" : false,
-        "move-up" : false,
-        "move-down" : false
-    },
-    bindings = {        // key boundend with actions
-    },
-    listening = false;
+    var actions = {         // posible actions in game
+            "n" : false,    // move north
+            "s" : false,    //      south
+            "w" : false,    //      west
+            "e" : false,    //      east
+            "p" : false     // pause game
+        },
+        bindings = {},  // key boundend with actions
+        listening = false;
 
     // public members:
     return Object.freeze({
         keyDownEventHandler: function (e) {
-            console.log("Down: " + e.keyCode);
             var b = bindings[e.keyCode];
             if (actions.hasOwnProperty(b)) {
                 actions[b] = true;
             }
         },
         keyUpEventHandler: function (e) {
-            console.log("Up: " + e.keyCode);
             var b = bindings[e.keyCode];
             if (actions.hasOwnProperty(b)) {
                 actions[b] = false;
-                //console.log(b, e.keyCode, "up");
             }
         },
-        onClickEventHandler: function (e) {
-            console.log('You have clicked on the canvas');
-        },
         getActions: function () {
+            console.log(actions);
             return actions;
         },
         init: function () {
             if (CANVAS) {
                 // append listeners:
                 CANVAS.addEventListener("keydown", CONTROLS.keyDownEventHandler);
-                CANVAS.addEventListener("keydown", CONTROLS.keyDownEventHandler);
-                CANVAS.addEventListener("click", CONTROLS.onClickEventHandler);
+                CANVAS.addEventListener("keyup", CONTROLS.keyUpEventHandler);
+                CANVAS.addEventListener("click", CONTROLS.getActions);
                 // standard key setup / bindings:
-                CONTROLS.bindKey(65, "move-left");    // a
-                CONTROLS.bindKey(68, "move-right");   // d
-                CONTROLS.bindKey(87, "move-up");      // w
-                CONTROLS.bindKey(83, "move-down");    // s
-                CONTROLS.bindKey(32, "fire-primary");  // space
+                CONTROLS.bindKey(65, "w");  // a key
+                CONTROLS.bindKey(68, "e");  // d key
+                CONTROLS.bindKey(87, "n");  // w key
+                CONTROLS.bindKey(83, "s");  // s key
+                CONTROLS.bindKey(37, "w");  // left-arrow
+                CONTROLS.bindKey(39, "e");  // right arrow
+                CONTROLS.bindKey(38, "n");  // up arrow
+                CONTROLS.bindKey(40, "s");  // down arrow
+                CONTROLS.bindKey(80, "p");  // p key
+                CONTROLS.bindKey(40, "s");  // down arrow
+                //CONTROLS.bindKey(27, "s");  // ESC key [doesn't work...]
                 // everything went OK
                 // tell gameManager, that i'm ready
-                CANVAS.focus();
-                console.log('done');
             }
         },
         halt: function () {
@@ -65,7 +64,7 @@ var CONTROLS = function () {
                     }
                 }
                 // clear bindings
-                bindings = {};
+                bindings = {}; // aż tak drastycznie? nazwa mówi zatrzymaj, nie zniszcz...
             }
         },
         bindKey: function (key, action) {
