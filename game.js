@@ -25,6 +25,7 @@ var GAME = (function () {
         try {
             tS = Date.now();
             finished = false;
+            run = null;
             CANVAS = document.getElementById(CONF.canvasName);
             // check if canvas element is correct:
             if (!(CANVAS instanceof HTMLCanvasElement)) {
@@ -48,9 +49,9 @@ var GAME = (function () {
             CANVAS.addEventListener('focus', function () {
                 GAME.play();
             });
+            GAME.play();
             tE = Date.now();
             console.log('GAME INIT TOOK: ' + (tE - tS) + '[ms]');
-            //GAME.play();
         } catch (error) {
             console.error(error.name + ': ' + error.message);
         }
@@ -76,7 +77,7 @@ var GAME = (function () {
     API.end = function () {
         finished = true;
         API.pause();
-        alert('Koniec gry!\nTwój wynik:\t' + SCORE + '\nZebrałeś:\t' + COLLECTED);
+        alert('Koniec gry!\nTwój wynik:\t' + SCORE + '\nZebrałeś:\t\t' + COLLECTED);
     };
     return Object.freeze(API);
 } ());

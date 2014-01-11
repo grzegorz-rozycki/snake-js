@@ -73,7 +73,46 @@ var PHYSICS = (function () {
     }
     function moveFruit() {
         var x = Math.round(Math.random() * (CONF.mapWidth - 3) + 1),
-            y = Math.round(Math.random() * (CONF.mapHeight - 3) + 1);
+            y = Math.round(Math.random() * (CONF.mapHeight - 3) + 1),
+            clean = true,
+            lt = null,
+            ls = null,
+            s = null,
+            i = null;
+        // check if random position is outsiede of snake body
+        for (s = 0, ls = snake.length; s < ls; s += 1) {
+            if ((x === snake[s][0]) && (y === snake[s][1])) {
+                clean = false;
+                break;
+            }
+        }
+        // search for empty point, starting from x, y
+        if (clean !== true) {
+            // FIXME: can produce border values/points
+            lt = CONF.mapHeight * CONF.mapWidth;
+            i = 0;
+            while (i < lt && clean !== true) {
+                x = (x + 1) % (CONF.mapWidth - 1);
+                clean = true;
+                for (s = 0; s < ls; s += 1) {
+                    if ((x === snake[s][0]) && (y === snake[s][1])) {
+                        clean = false;
+                        break;
+                    }
+                }
+                if (clean === false) {
+                    y = (y + 1) % (CONF.mapHeight - 1);
+                    clean = true;
+                    for (s = 0; s < ls; s += 1) {
+                        if ((x === snake[s][0]) && (y === snake[s][1])) {
+                            clean = false;
+                            break;
+                        }
+                    }
+                }
+                i += 1;
+            }
+        }
         fruit[0] = x;
         fruit[1] = y;
     }
