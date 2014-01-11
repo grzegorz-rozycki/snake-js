@@ -1,15 +1,8 @@
 var CONTROLS = function () {
     'use strict';
     // private members:
-    var actions = {         // posible actions in game
-            "n" : false,    // move north
-            "s" : false,    //      south
-            "w" : false,    //      west
-            "e" : false,    //      east
-            "p" : false     // pause game
-        },
-        bindings = {},  // key boundend with actions
-        listening = false;
+    var actions = null,   // posible actions in game
+        bindings = null;  // key boundend with actions
 
     // public members:
     return Object.freeze({
@@ -30,6 +23,14 @@ var CONTROLS = function () {
         },
         init: function () {
             if (CANVAS) {
+                bindings = {};
+                actions = {
+                    "n" : false,    // move north
+                    "s" : false,    //      south
+                    "w" : false,    //      west
+                    "e" : false,    //      east
+                    "p" : false     // pause game
+                }
                 // append listeners:
                 CANVAS.addEventListener("keydown", CONTROLS.keyDownEventHandler);
                 CANVAS.addEventListener("keyup", CONTROLS.keyUpEventHandler);

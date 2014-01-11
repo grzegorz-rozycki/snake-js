@@ -70,8 +70,9 @@ var GRAPHICS = (function () {
         }
     };
     API.draw = function () {
+        var fruit = PHYSICS.getFruit();
         drawMap();
-        drawFriut(PHYSICS.getFruit());
+        drawFriut(fruit[0], fruit[1]);
         drawSnake(PHYSICS.getSnake());
     };
 

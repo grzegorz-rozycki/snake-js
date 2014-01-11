@@ -1,9 +1,8 @@
 var GAME = (function () {
     'use strict';
     var API = Object.create(null),
-        run = null,
-        tS = null,
-        tE = null;
+        finished = null,
+        run = null;
     // contructor
     // check if all modules are available:
     if (
@@ -12,17 +11,20 @@ var GAME = (function () {
         typeof PHYSICS !== "object" ||
         typeof CONF !== "object"
     ) {
-        //console.log(typeof GRAPHICS, typeof CONTROLS, typeof PHYSICS , typeof CONF);
         throw new Error('GAME: missing one of modules/objects [GRAPHICS, CONTROLS, PHYSICS, CONF]');
     }
     // private functions:
     function step() {
         PHYSICS.step();
+        GRAPHICS.draw();
     }
     // public API:
     API.init = function () {
+        var tS = null,
+            tE = null;
         try {
             tS = Date.now();
+            finished = false;
             CANVAS = document.getElementById(CONF.canvasName);
             // check if canvas element is correct:
             if (!(CANVAS instanceof HTMLCanvasElement)) {
@@ -36,16 +38,19 @@ var GAME = (function () {
             CONTROLS.init();
             PHYSICS.init();
             GRAPHICS.draw();
+            COLLECTED = 0;
+            SCORE = 0;
+            // give focus before adding event listener
+            CANVAS.focus();
             CANVAS.addEventListener('blur', function () {
-                //console.log('CANVAS lost focus');
+                GAME.pause();
             });
             CANVAS.addEventListener('focus', function () {
-                //console.log('CANVAS gained focus');
+                GAME.play();
             });
-            //CANVAS.focus();
             tE = Date.now();
             console.log('GAME INIT TOOK: ' + (tE - tS) + '[ms]');
-            GAME.play();
+            //GAME.play();
         } catch (error) {
             console.error(error.name + ': ' + error.message);
         }
@@ -57,7 +62,7 @@ var GAME = (function () {
         }
     };
     API.play = function () {
-        if (run === null) {
+        if (run === null && finished === false) {
             run = setInterval(step, CONF.fps);
         }
     };
@@ -67,7 +72,11 @@ var GAME = (function () {
         } else {
             API.play();
         }
-    }
-    //API.end = function () {};
+    };
+    API.end = function () {
+        finished = true;
+        API.pause();
+        alert('Koniec gry!\nTwój wynik:\t' + SCORE + '\nZebrałeś:\t' + COLLECTED);
+    };
     return Object.freeze(API);
 } ());
