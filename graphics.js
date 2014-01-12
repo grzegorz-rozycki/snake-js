@@ -3,9 +3,11 @@ var GRAPHICS = (function () {
     // private:
     var API = Object.create(null),
         backgroundColor = '#BDBDBD',
+        gameOverColor = '#000',
         borderColor = '#424242',
         fruitColor = '#FE1506',
         snakeColor = '#2D9424',
+        textColor = '#FFF',
         ctx = null;
 
     // helper functions
@@ -61,6 +63,14 @@ var GRAPHICS = (function () {
         );
         ctx.restore();
     }
+    function drawInfo() {
+        ctx.save();
+        ctx.font = CONF.tileSize + 'px Arial';
+        ctx.fillStyle = textColor;
+        ctx.fillText('SCORE: ' + SCORE + 'pts.', CONF.tileSize, (CONF.tileSize - 2));
+        ctx.fillText('FPS: ' + Math.round(1000 / CONF.fps), (CONF.mapWidth - 6) * CONF.tileSize, (CONF.tileSize - 2));
+        ctx.restore();
+    }
     // add public methods
     API.init = function () {
         if (CANVAS) {
@@ -74,6 +84,18 @@ var GRAPHICS = (function () {
         drawMap();
         drawFriut(fruit[0], fruit[1]);
         drawSnake(PHYSICS.getSnake());
+        drawInfo();
+    };
+    API.gameOver = function () {
+        ctx.save();
+        ctx.font = (CONF.tileSize * 2) + 'px Arial';
+        ctx.fillStyle = gameOverColor;
+        ctx.fillText(
+            'GAME OVER!',
+            Math.round((CONF.mapWidth * CONF.tileSize - ctx.measureText('GAME OVER!').width) / 2),
+            (Math.round(CONF.mapHeight / 2 + 1 )) * CONF.tileSize
+        );
+        ctx.restore();
     };
 
     // freeze [if possible] and make the API public:
