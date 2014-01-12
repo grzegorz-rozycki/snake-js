@@ -68,7 +68,7 @@ var GRAPHICS = (function () {
         ctx.font = CONF.tileSize + 'px Arial';
         ctx.fillStyle = textColor;
         ctx.fillText('SCORE: ' + SCORE + 'pts.', CONF.tileSize, (CONF.tileSize - 2));
-        ctx.fillText('FPS: ' + Math.round(1000 / CONF.fps), (CONF.mapWidth - 6) * CONF.tileSize, (CONF.tileSize - 2));
+        ctx.fillText('FPS: ' + GAME.getFPS(), (CONF.mapWidth - 6) * CONF.tileSize, (CONF.tileSize - 2));
         ctx.restore();
     }
     // add public methods

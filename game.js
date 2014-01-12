@@ -1,7 +1,24 @@
 var GAME = (function () {
     'use strict';
     var API = Object.create(null),
+        calibrationFrame = null,
         finished = null,
+        eps = [
+            // fps precision
+            //~ 10 100 index.html:55
+//~ 15 67 index.html:55
+//~ 20 50 index.html:55
+//~ 25 40 index.html:55
+//~ 30 33 index.html:55
+//~ 35 29 index.html:55
+//~ 40 25 index.html:55
+//~ 45 22 index.html:55
+//~ 50 20 index.html:55
+//~ 55 18 index.html:55
+//~ 60 17
+
+        ],
+        fps = null,
         run = null;
     // contructor
     // check if all modules are available:
@@ -14,14 +31,21 @@ var GAME = (function () {
         throw new Error('GAME: missing one of modules/objects [GRAPHICS, CONTROLS, PHYSICS, CONF]');
     }
     // private functions:
-    function step() {
-        if (PHYSICS.step()) {
-            GRAPHICS.draw();
-        } else {
-            // game ended
-            finished = true;
-            API.pause();
-            GRAPHICS.gameOver();
+    function step(timestamp) {
+        if (finished != true) {
+            fps = (timestamp - calibrationFrame);
+            if ((fps  + 6) >= CONF.fps) {
+                calibrationFrame = timestamp;
+                if (PHYSICS.step()) {
+                    GRAPHICS.draw();
+                } else {
+                    // game ended
+                    finished = true;
+                    API.pause();
+                    GRAPHICS.gameOver();
+                }
+            }
+            requestAnimationFrame(step);
         }
     }
     // public API:
@@ -64,13 +88,17 @@ var GAME = (function () {
     },
     API.pause = function () {
         if (run !== null) {
-            clearInterval(run);
+            //clearInterval(run);
+            cancelAnimationFrame(run);
             run = null;
         }
     };
     API.play = function () {
         if (run === null && finished === false) {
-            run = setInterval(step, CONF.fps);
+            //run = setInterval(step, CONF.fps);
+            calibrationFrame = 0;
+            //deltaFrames = 0; // or a high value to force immidiete drawing of first frame
+            run = requestAnimationFrame(step);
         }
     };
     API.toggle = function () {
@@ -79,6 +107,9 @@ var GAME = (function () {
         } else {
             API.play();
         }
+    };
+    API.getFPS = function () {
+        return (1000 / fps);    // Math.round
     };
     return Object.freeze(API);
 } ());
