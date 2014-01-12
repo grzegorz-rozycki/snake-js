@@ -15,8 +15,14 @@ var GAME = (function () {
     }
     // private functions:
     function step() {
-        PHYSICS.step();
-        GRAPHICS.draw();
+        if (PHYSICS.step()) {
+            GRAPHICS.draw();
+        } else {
+            // game ended
+            finished = true;
+            API.pause();
+            GRAPHICS.gameOver();
+        }
     }
     // public API:
     API.init = function () {
@@ -73,11 +79,6 @@ var GAME = (function () {
         } else {
             API.play();
         }
-    };
-    API.end = function () {
-        finished = true;
-        API.pause();
-        alert('Koniec gry!\nTwój wynik:\t' + SCORE + '\nZebrałeś:\t\t' + COLLECTED);
     };
     return Object.freeze(API);
 } ());

@@ -135,9 +135,11 @@ var PHYSICS = (function () {
             moveFruit();
         }
         if (checkForColisions()) {
-            GAME.end();
+            //GAME.end();
+            return false;
         } else {
             moveSnake();
+            return true;
         }
     };
     API.getSnake = function () {
