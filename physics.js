@@ -75,10 +75,12 @@ var PHYSICS = (function () {
         var x = Math.round(Math.random() * (CONF.mapWidth - 3) + 1),
             y = Math.round(Math.random() * (CONF.mapHeight - 3) + 1),
             clean = true,
-            lt = null,
+            li = null,
+            lj = null,
             ls = null,
             s = null,
-            i = null;
+            i = null,
+            j = null;
         // check if random position is outsiede of snake body
         for (s = 0, ls = snake.length; s < ls; s += 1) {
             if ((x === snake[s][0]) && (y === snake[s][1])) {
@@ -86,22 +88,13 @@ var PHYSICS = (function () {
                 break;
             }
         }
+        // random point din't fit outside snake body
         // search for empty point, starting from x, y
         if (clean !== true) {
-            // FIXME: can produce border values/points
-            lt = CONF.mapHeight * CONF.mapWidth;
-            i = 0;
-            while (i < lt && clean !== true) {
-                x = (x + 1) % (CONF.mapWidth - 1);
-                clean = true;
-                for (s = 0; s < ls; s += 1) {
-                    if ((x === snake[s][0]) && (y === snake[s][1])) {
-                        clean = false;
-                        break;
-                    }
-                }
-                if (clean === false) {
-                    y = (y + 1) % (CONF.mapHeight - 1);
+            for (i = 1, li = (CONF.mapHeight - 1); i < li; i += 1) {
+                for (j = 1, lj = (CONF.mapWidth - 1); j < lj; j += 1) {
+                    x = ((x + j) % (CONF.mapWidth - 2) + 1);    // whoa, nice :)
+                    y = ((y + i) % (CONF.mapHeight - 2) + 1);    // whoa, nice :)
                     clean = true;
                     for (s = 0; s < ls; s += 1) {
                         if ((x === snake[s][0]) && (y === snake[s][1])) {
@@ -109,12 +102,17 @@ var PHYSICS = (function () {
                             break;
                         }
                     }
+                    if (clean) {
+                        fruit[0] = x;
+                        fruit[1] = y;
+                        return ;
+                    }
                 }
-                i += 1;
             }
+        } else {
+            fruit[0] = x;
+            fruit[1] = y;
         }
-        fruit[0] = x;
-        fruit[1] = y;
     }
     // public API:
     API.init = function () {

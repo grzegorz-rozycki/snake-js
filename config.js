@@ -7,7 +7,7 @@ CONF.canvasName = 'canvas';     // id of canvas element to draw to
 CONF.tileSize = 20;             // size of tile in pixels
 CONF.mapHeight = 20;            // game map height in tiles; pixels = tileSize * mapHeight
 CONF.mapWidth = 40;             // game map width in tiles; pixels = tileSize * mapWidth
-CONF.initLength = 10;           // initial length of the snake in tiles
+CONF.initLength = 3;            // initial length of the snake in tiles
 // position to place snake at the begining; in tiles
 CONF.initPosition = [Math.floor(CONF.mapWidth / 2), Math.floor(CONF.mapHeight / 2)];
 CONF.ppf = 5;                   // points per fruit collected by snake
