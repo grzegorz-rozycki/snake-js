@@ -128,8 +128,10 @@ var PHYSICS = (function () {
         moveFruit();
     };
     API.step = function () {
+        var tail = snake.length - 1;
+        moveSnake();
         if (fruitCollected()) {
-            snake.push([0, 0]);
+            snake.push([snake[tail][0], snake[tail][1]]);
             SCORE += CONF.ppf;
             COLLECTED += 1;
             moveFruit();
@@ -138,7 +140,6 @@ var PHYSICS = (function () {
             //GAME.end();
             return false;
         } else {
-            moveSnake();
             return true;
         }
     };

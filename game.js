@@ -3,21 +3,6 @@ var GAME = (function () {
     var API = Object.create(null),
         calibrationFrame = null,
         finished = null,
-        eps = [
-            // fps precision
-            //~ 10 100 index.html:55
-//~ 15 67 index.html:55
-//~ 20 50 index.html:55
-//~ 25 40 index.html:55
-//~ 30 33 index.html:55
-//~ 35 29 index.html:55
-//~ 40 25 index.html:55
-//~ 45 22 index.html:55
-//~ 50 20 index.html:55
-//~ 55 18 index.html:55
-//~ 60 17
-
-        ],
         fps = null,
         run = null;
     // contructor
@@ -33,8 +18,8 @@ var GAME = (function () {
     // private functions:
     function step(timestamp) {
         if (finished != true) {
-            fps = (timestamp - calibrationFrame);
-            if ((fps  + 6) >= CONF.fps) {
+            fps = Math.round(timestamp - calibrationFrame);
+            if ((CONF.fps - fps) < 0) {
                 calibrationFrame = timestamp;
                 if (PHYSICS.step()) {
                     GRAPHICS.draw();
@@ -109,7 +94,7 @@ var GAME = (function () {
         }
     };
     API.getFPS = function () {
-        return (1000 / fps);    // Math.round
+        return Math.round((1000 / fps) * 100) / 100;    // Math.round
     };
     return Object.freeze(API);
 } ());

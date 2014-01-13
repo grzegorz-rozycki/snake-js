@@ -26,12 +26,14 @@ var GRAPHICS = (function () {
         );
     }
     function drawSnake(body) {
-        var i = null,
+        var op = null,
+            i = null,
             l = null;
         ctx.save();
         ctx.fillStyle = snakeColor;
-        for (i = 0, l = body.length; i < l; i += 1) {
+        for (i = 0, l = body.length, op = .3 / l; i < l; i += 1) {
             drawTile(body[i][0], body[i][1]);
+            ctx.globalAlpha -= op;
         }
         ctx.restore();
     }
