@@ -88,16 +88,18 @@ var GRAPHICS = (function () {
         drawSnake(PHYSICS.getSnake());
         drawInfo();
     };
-    API.gameOver = function () {
-        ctx.save();
-        ctx.font = (CONF.tileSize * 2) + 'px Arial';
-        ctx.fillStyle = gameOverColor;
-        ctx.fillText(
-            'GAME OVER!',
-            Math.round((CONF.mapWidth * CONF.tileSize - ctx.measureText('GAME OVER!').width) / 2),
-            (Math.round(CONF.mapHeight / 2 + 1 )) * CONF.tileSize
-        );
-        ctx.restore();
+    API.write = function (text) {
+        if (typeof text === "string") {
+            ctx.save();
+            ctx.font = (CONF.tileSize * 2) + 'px Arial';
+            ctx.fillStyle = gameOverColor;
+            ctx.fillText(
+                text,
+                Math.round((CONF.mapWidth * CONF.tileSize - ctx.measureText(text).width) / 2),
+                (Math.round(CONF.mapHeight / 2 + 1 )) * CONF.tileSize
+            );
+            ctx.restore();
+        }
     };
 
     // freeze [if possible] and make the API public:

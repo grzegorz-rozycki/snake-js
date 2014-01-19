@@ -2,7 +2,9 @@ var GAME = (function () {
     'use strict';
     var API = Object.create(null),
         calibrationFrame = null,
+        restarting = null,
         finished = null,
+        paused = null,
         fps = null,
         run = null;
     // contructor
@@ -17,7 +19,7 @@ var GAME = (function () {
     }
     // private functions:
     function step(timestamp) {
-        if (finished != true) {
+        if (finished !== true && paused !== true) {
             fps = Math.round(timestamp - calibrationFrame);
             if ((CONF.fps - fps) < 0) {
                 calibrationFrame = timestamp;
@@ -26,8 +28,8 @@ var GAME = (function () {
                 } else {
                     // game ended
                     finished = true;
-                    API.pause();
-                    GRAPHICS.gameOver();
+                    //API.pause();
+                    GRAPHICS.write('GAME OVER!');
                 }
             }
             requestAnimationFrame(step);
@@ -40,6 +42,7 @@ var GAME = (function () {
         try {
             tS = Date.now();
             finished = false;
+            paused = true;  // pause the game on init
             run = null;
             CANVAS = document.getElementById(CONF.canvasName);
             // check if canvas element is correct:
@@ -72,18 +75,32 @@ var GAME = (function () {
         }
     },
     API.pause = function () {
-        if (run !== null) {
-            //clearInterval(run);
-            cancelAnimationFrame(run);
-            run = null;
+        if (finished !== true) {
+            if (restarting !== null) {
+                clearInterval(restarting);
+                restarting = null;
+            }
+            if (run !== null) {
+                cancelAnimationFrame(run);
+                run = null;
+            }
+            GRAPHICS.draw();
+            GRAPHICS.write('GAME PAUSED');
+            paused = true;
         }
     };
     API.play = function () {
         if (run === null && finished === false) {
-            //run = setInterval(step, CONF.fps);
-            calibrationFrame = 0;
-            //deltaFrames = 0; // or a high value to force immidiete drawing of first frame
-            run = requestAnimationFrame(step);
+            GRAPHICS.draw();
+            GRAPHICS.write('STARTING');
+            restarting = setTimeout(
+                function () {
+                    calibrationFrame = 0;
+                    run = requestAnimationFrame(step);
+                    paused = false;
+                },
+                1000
+            );
         }
     };
     API.toggle = function () {
