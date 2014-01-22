@@ -45,16 +45,7 @@
             // window.onload = function () { loadAsync('compressed-js', function () { on-load-callback; }); };
             window.onload = function () {
                 GAME.init();
-                fr();
             };
-            function fr() {
-                var step = 1,
-                    max = 60,
-                    i = 10;
-                for (; i <= max; i += step) {
-                    console.log(i, 1000 / i, 1000 / (i - 1) - 1000 / i);
-                }
-            }
         </script>
     </body>
 </html>
