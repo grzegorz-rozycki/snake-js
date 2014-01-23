@@ -6,32 +6,29 @@ var CONTROLS = function () {
         functions = null, // functions e.g. pause/resume
         actions = null;   // posible actions in game
 
-
-    function functionKeyPress(keyCode) {
-        var b = functionBindings[keyCode];
-        if (functions.hasOwnProperty(b)) {
-            if (typeof functions[b] === 'function') {
-                functions[b]();
-            }
-        }
-    }
     // public members:
     return Object.freeze({
+        functionKeyHandler: function (e) {
+            var b = functionBindings[e.keyCode];
+            if (functions.hasOwnProperty(b)) {
+                if (typeof functions[b] === 'function') {
+                    functions[b]();
+                    e.stopPropagation();
+                }
+            }
+        },
         keyDownEventHandler: function (e) {
             var b = actionBindings[e.keyCode];
             if (actions.hasOwnProperty(b)) {
-                // if action key, make action checked
                 actions[b] = true;
+                e.stopPropagation();
             }
         },
         keyUpEventHandler: function (e) {
             var b = actionBindings[e.keyCode];
             if (actions.hasOwnProperty(b)) {
-                // if action key, make action unchecked
                 actions[b] = false;
-            } else {
-                // maybe it's a function key?
-                functionKeyPress(e.keyCode);
+                e.stopPropagation();
             }
         },
         getActions: function () {
@@ -54,7 +51,7 @@ var CONTROLS = function () {
                 // append listeners:
                 CANVAS.addEventListener("keydown", CONTROLS.keyDownEventHandler);
                 CANVAS.addEventListener("keyup", CONTROLS.keyUpEventHandler);
-                CANVAS.addEventListener("click", GAME.toggle);
+                CANVAS.addEventListener("keyup", CONTROLS.functionKeyHandler);
                 // standard key setup / bindings:
                 CONTROLS.bindActionKey(65, "w");  // a key
                 CONTROLS.bindActionKey(68, "e");  // d key
@@ -63,8 +60,6 @@ var CONTROLS = function () {
                 CONTROLS.bindActionKey(37, "w");  // left-arrow
                 CONTROLS.bindActionKey(39, "e");  // right arrow
                 CONTROLS.bindActionKey(38, "n");  // up arrow
-                CONTROLS.bindActionKey(40, "s");  // down arrow
-                //CONTROLS.bindActionKey(80, "p");  // p key
                 CONTROLS.bindActionKey(40, "s");  // down arrow
                 //CONTROLS.bindActionKey(27, "s");  // ESC key [doesn't work...]
                 CONTROLS.bindFunctionKey(80, 'pause');
@@ -75,9 +70,9 @@ var CONTROLS = function () {
         halt: function () {
             if (CANVAS) {
                 // clean up!
-                //canvas.removeEventListener("mousemove", controlManager.mouseMoveEventHandler);
                 CANVAS.removeEventListener("keydown", CONTROLS.keyDownEventHandeler);
                 CANVAS.removeEventListener("keyup", CONTROLS.keyUpEventHandler);
+                CANVAS.removeEventListener("keyup", CONTROLS.functionKeyHandler);
                 // clear action queue
                 for (var i in actions) {
                     if (actions.hasOwnProperty(i)) {
