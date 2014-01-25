@@ -12,4 +12,4 @@ CONF.initLength = 3;            // initial length of the snake in tiles
 CONF.initPosition = [Math.floor(CONF.mapWidth / 2), Math.floor(CONF.mapHeight / 2)];
 CONF.ppf = 5;                   // points per fruit collected by snake
 CONF.speed = 1;                 // snake movement speed [i.e. how many frames skip before move by a tile]
-CONF.fps = 1000 / 20;           // framerate, max is ~60Hz, this is used to limit the nextAnimationFrame() function to this value
+CONF.fps = 1000 / 16;           // framerate, max is ~60Hz, this is used to limit the nextAnimationFrame() function to this value
