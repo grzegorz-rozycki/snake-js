@@ -20,24 +20,24 @@
         <script type="text/javascript">
             'use strict';
             var CANVAS = null;
--            // the method to load js is only for development, for deployment:
--            // - pack the whole js code inside a single file [and uglify it for to transmit less bytes over the wire]
--            // - use loadAsync function
--            // window.onload = function () {loadAsync...};
--            function loadAsync(url, callback) {
--                'use strict';
--                var scriptElement = document.createElement('script'),
--                    dst = document.body;
--                url = encodeURI(url);
--                scriptElement.type = 'text/javascript';
--                scriptElement.async = 'true';
--                if (typeof callback === 'function') {
--                    scriptElement.onload = callback;
--                }
--                dst.appendChild(scriptElement);
--                scriptElement.src = url;
--            }
--            // window.onload = function () { loadAsync('compressed-js', function () { on-load-callback; }); };
+            // the method to load js is only for development, for deployment:
+            // - pack the whole js code inside a single file [and uglify it for to transmit less bytes over the wire]
+            // - use loadAsync function
+            // window.onload = function () {loadAsync...};
+            function loadAsync(url, callback) {
+                'use strict';
+                var scriptElement = document.createElement('script'),
+                    dst = document.body;
+                url = encodeURI(url);
+                scriptElement.type = 'text/javascript';
+                scriptElement.async = 'true';
+                if (typeof callback === 'function') {
+                    scriptElement.onload = callback;
+                }
+                dst.appendChild(scriptElement);
+                scriptElement.src = url;
+            }
+            // window.onload = function () { loadAsync('compressed-js', function () { on-load-callback; }); };
             window.onload = function () {
                 GAME.init();
             };
