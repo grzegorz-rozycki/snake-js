@@ -12,27 +12,38 @@ Controls.prototype.addBinding = function (action, keyCode) {
     } else {
         return false;
     }
-}
+};
 
 Controls.prototype.keyDown = function (event) {
     var binding;
 
     if (event.keyCode in this.bindings) {
         binding = this.bindings[event.keyCode];
-        this.actions[binding] = true;
+
+        if (binding instanceof Controls.Handler && binding.on === "down" && binding.action instanceof Function) {
+            binding.action();
+        } else {
+            this.actions[binding] = true;
+        }
+
     }
-}
+};
 
 Controls.prototype.keyUp = function (event) {
     var binding;
 
     if (event.keyCode in this.bindings) {
         binding = this.bindings[event.keyCode];
-        this.actions[binding] = false;
-    }
-}
 
-Controls.prototype.createDefualts = function () {
+        if (binding instanceof Controls.Handler && binding.on === "up" && binding.action instanceof Function) {
+            binding.action();
+        } else {
+            this.actions[binding] = false;
+        }
+    }
+};
+
+Controls.createDefualts = function () {
     var instance = new Controls();
 
     instance.actions.n = false;
@@ -52,4 +63,9 @@ Controls.prototype.createDefualts = function () {
     //instance.bindings[80] = function () {}; p key
 
     return instance;
-}
+};
+
+Controls.Handler = function () {
+    this.action = null;
+    this.on = null;
+};
