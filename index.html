@@ -12,10 +12,14 @@
                 Your browser doesn't support the canvas element...
             </canvas>
         </div>
+        <script type="text/javascript" src="controls.js"></script>
         <script type="text/javascript" src="snake.js"></script>
         <script type="text/javascript">
             'use strict';
-            window.onload = snake.init;
+            window.onload = function () {
+               snake.init();
+               snake.start();
+	   }
         </script>
     </body>
 </html>
