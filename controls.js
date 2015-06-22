@@ -22,7 +22,7 @@ Controls.prototype.keyDown = function (event) {
 
         if (binding instanceof Controls.Handler && binding.on === "down" && binding.action instanceof Function) {
             binding.action();
-        } else {
+        } else if (binding in this.actions) {
             this.actions[binding] = true;
         }
 
@@ -37,7 +37,7 @@ Controls.prototype.keyUp = function (event) {
 
         if (binding instanceof Controls.Handler && binding.on === "up" && binding.action instanceof Function) {
             binding.action();
-        } else {
+        } else if (binding in this.actions) {
             this.actions[binding] = false;
         }
     }

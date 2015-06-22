@@ -1,9 +1,10 @@
 'use strict';
-snake = (function () {
+window.snake = (function () {
     var api =  Object.create(null),
         conf = Object.create(null),
+        isInitiated = false,
+        loop = null,
         module = Object.create(null),
-        loop,
         score;
 
     conf.canvasName = 'canvas';     // id of canvas element to draw to
@@ -16,15 +17,52 @@ snake = (function () {
     conf.ppf = 5;                   // points per fruit collected by snake
     conf.speed = {current: 0, map: [250, 200, 150, 100, 50]};
 
-    module.controls = new Controls();
-    module.graphics = new Graphics();
-    module.physics = new Physics();
+    module.controls = Controls.createDefualts();
+//    module.graphics = new Graphics();
+//    module.physics = new Physics();
 
-    api.init = function () {};
+    function step() {
+        console.log(module.controls.actions);
+        loop = window.requestAnimationFrame(step);
+    }
 
-    api.start = function () {};
-    
-    api.stop = function () {};
+    api.init = function () {
+        var handler;
+
+        if (!isInitiated) {
+            handler = new Controls.Handler();
+            handler.action = function () {
+                if (api.isRunning()) {
+                    api.stop();
+                } else {
+                    api.start();
+                }
+            };
+
+            handler.on = "up";
+            module.controls.bindings["27"] = handler;
+            window.addEventListener("keydown", module.controls.keyDown.bind(module.controls));
+            window.addEventListener("keyup", module.controls.keyUp.bind(module.controls));
+            isInitiated = true;
+        }
+    };
+
+    api.start = function () {
+        if (!loop) {
+            loop = window.requestAnimationFrame(step);
+        }
+    };
+
+    api.stop = function () {
+        if (loop) {
+            window.cancelAnimationFrame(loop);
+            loop = null;
+        }
+    };
+
+    api.isRunning = function () {
+        return (loop !== null);
+    };
 
     return Object.freeze(api);
 } ());
