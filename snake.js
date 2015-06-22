@@ -3,7 +3,7 @@ window.snake = (function () {
     var api =  Object.create(null),
         conf = Object.create(null),
         isInitiated = false,
-        loop = null,
+        loop = Object.create(null),
         module = Object.create(null),
         score;
 
@@ -15,21 +15,37 @@ window.snake = (function () {
     // position to place snake at the begining; in tiles
     conf.initPosition = [Math.floor(conf.mapWidth / 2), Math.floor(conf.mapHeight / 2)];
     conf.ppf = 5;                   // points per fruit collected by snake
-    conf.speed = {current: 0, map: [250, 200, 150, 100, 50]};
+    conf.speed = {current: 0, map: [1000, 250, 200, 150, 100, 50]};
 
     module.controls = Controls.createDefualts();
 //    module.graphics = new Graphics();
 //    module.physics = new Physics();
 
+    /**
+     *
+     */
     function step() {
+        var now = Date.now();
+
+        if (now - loop.lastAction >= loop.timeout) {
+            loop.lastAction = now;
+            update();
+        }
+        loop.frameRequest = window.requestAnimationFrame(step);
+    }
+
+    function update() {
         console.log(module.controls.actions);
-        loop = window.requestAnimationFrame(step);
     }
 
     api.init = function () {
         var handler;
 
         if (!isInitiated) {
+            loop.frameRequest = null;
+            loop.lastAction = 0;
+            loop.timeout = conf.speed.map[conf.speed.current];
+
             handler = new Controls.Handler();
             handler.action = function () {
                 if (api.isRunning()) {
@@ -48,20 +64,20 @@ window.snake = (function () {
     };
 
     api.start = function () {
-        if (!loop) {
-            loop = window.requestAnimationFrame(step);
+        if (!loop.frameRequest) {
+            loop.frameRequest = window.requestAnimationFrame(step);
         }
     };
 
     api.stop = function () {
-        if (loop) {
-            window.cancelAnimationFrame(loop);
-            loop = null;
+        if (loop.frameRequest) {
+            window.cancelAnimationFrame(loop.frameRequest);
+            loop.frameRequest = null;
         }
     };
 
     api.isRunning = function () {
-        return (loop !== null);
+        return (loop.frameRequest !== null);
     };
 
     return Object.freeze(api);
