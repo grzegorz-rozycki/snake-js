@@ -1,153 +1,168 @@
-var PHYSICS = (function () {
-    'use strict';
-    var API = Object.create(null),
-        movement = null,
-        fruit = null,
-        snake = null;
-    // private methods:
-    function checkForColisions() {
-        var l = (snake.length - 1),
-            i = 1;
-        // border collision
+'use strict';
+
+function Physics(mapWidth, mapHeight) {
+    this.actions = null;
+    this.mapWidth = mapWidth;
+    this.mapHeight = mapHeight;
+    this.fruit = null,
+    this.movement = null,
+    this.snake = null;
+}
+
+Physics.prototype.checkForColisions = function () {
+    var l = (this.snake.length - 1),
+        i = 1;
+
+    // border collision
+    if (
+        this.snake[0][0] <= 0 ||
+        this.snake[0][1] <= 0 ||
+        this.snake[0][0] >= (this.mapWidth - 1) ||
+        this.snake[0][1] >= (this.mapHeight - 1)
+    ) {
+        return true;
+    }
+
+    // self collision
+    for (; i < l; i += 1) {
         if (
-            snake[0][0] <= 0 ||
-            snake[0][1] <= 0 ||
-            snake[0][0] >= (CONF.mapWidth - 1) ||
-            snake[0][1] >= (CONF.mapHeight - 1)
+            (this.snake[0][0] === this.snake[i][0]) &&
+            (this.snake[0][1] === this.snake[i][1])
         ) {
             return true;
         }
-        // self collision
-        for (; i < l; i += 1) {
-            if (
-                (snake[0][0] === snake[i][0]) &&
-                (snake[0][1] === snake[i][1])
-            ) {
-                return true;
-            }
-        }
-        return false
     }
-    function fruitCollected() {
-        return (fruit[0] === snake[0][0] && fruit[1] === snake[0][1]);
+
+    return false
+};
+
+Physics.prototype.fruitCollected = function () {
+    return (this.fruit[0] === this.snake[0][0] && this.fruit[1] === this.snake[0][1]);
+};
+
+Physics.prototype.getDirection = function () {
+
+    if (this.actions.n && this.movement !== 's') {
+        return 'n';
     }
-    function getDirection() {
-        var act = CONTROLS.getActions();
-        if (act.n && movement !== 's') {
-            return 'n';
-        }
-        if (act.e && movement !== 'w') {
-            return 'e';
-        }
-        if (act.s && movement !== 'n') {
-            return 's';
-        }
-        if (act.w && movement !== 'e') {
-            return 'w';
-        }
-        return movement;
+
+    if (this.actions.e && this.movement !== 'w') {
+        return 'e';
     }
-    function moveSnake() {
-        var i = (snake.length - 1);
-        movement = getDirection();
-        for (; i > 0; i -= 1) {
-            snake[i][0] = snake[i - 1][0];
-            snake[i][1] = snake[i - 1][1];
-        }
-        switch (movement) {
-            case 'n':
-                snake[0][1] -= 1;
-                break;
-            case 's':
-                snake[0][1] += 1;
-                break;
-            case 'w':
-                snake[0][0] -= 1;
-                break;
-            case 'e':
-                snake[0][0] += 1;
-                break;
-            default:
-                throw new Error('PHYSICS: unknown movement direction: ' + movement);
+
+    if (this.actions.s && this.movement !== 'n') {
+        return 's';
+    }
+
+    if (this.actions.w && this.movement !== 'e') {
+        return 'w';
+    }
+
+    return this.movement;
+};
+
+Physics.prototype.moveSnake = function () {
+    var i = (this.snake.length - 1);
+
+    this.movement = this.getDirection();
+
+    for (; i > 0; i -= 1) {
+        this.snake[i][0] = this.snake[i - 1][0];
+        this.snake[i][1] = this.snake[i - 1][1];
+    }
+
+    switch (this.movement) {
+        case 'n':
+            this.snake[0][1] -= 1;
+            break;
+        case 's':
+            this.snake[0][1] += 1;
+            break;
+        case 'w':
+            this.snake[0][0] -= 1;
+            break;
+        case 'e':
+            this.snake[0][0] += 1;
+            break;
+        default:
+            throw new Error('PHYSICS: unknown movement direction: ' + this.movement);
+    }
+};
+
+Physics.prototype.moveFruit = function () {
+    var x = Math.round(Math.random() * (this.mapWidth - 3) + 1),
+        y = Math.round(Math.random() * (this.mapHeight - 3) + 1),
+        clean = true,
+        li = null,
+        lj = null,
+        ls = null,
+        s = null,
+        i = null,
+        j = null;
+    // check if random position is outsiede of snake body
+    for (s = 0, ls = this.snake.length; s < ls; s += 1) {
+        if ((x === this.snake[s][0]) && (y === this.snake[s][1])) {
+            clean = false;
+            break;
         }
     }
-    function moveFruit() {
-        var x = Math.round(Math.random() * (CONF.mapWidth - 3) + 1),
-            y = Math.round(Math.random() * (CONF.mapHeight - 3) + 1),
-            clean = true,
-            li = null,
-            lj = null,
-            ls = null,
-            s = null,
-            i = null,
-            j = null;
-        // check if random position is outsiede of snake body
-        for (s = 0, ls = snake.length; s < ls; s += 1) {
-            if ((x === snake[s][0]) && (y === snake[s][1])) {
-                clean = false;
-                break;
-            }
-        }
-        // random point din't fit outside snake body
-        // search for empty point, starting from x, y
-        if (clean !== true) {
-            for (i = 1, li = (CONF.mapHeight - 1); i < li; i += 1) {
-                for (j = 1, lj = (CONF.mapWidth - 1); j < lj; j += 1) {
-                    x = ((x + j) % (CONF.mapWidth - 2) + 1);    // whoa, nice :)
-                    y = ((y + i) % (CONF.mapHeight - 2) + 1);    // whoa, nice :)
-                    clean = true;
-                    for (s = 0; s < ls; s += 1) {
-                        if ((x === snake[s][0]) && (y === snake[s][1])) {
-                            clean = false;
-                            break;
-                        }
-                    }
-                    if (clean) {
-                        fruit[0] = x;
-                        fruit[1] = y;
-                        return ;
+    // random point din't fit outside snake body
+    // search for empty point, starting from x, y
+    if (clean !== true) {
+        for (i = 1, li = (this.mapHeight - 1); i < li; i += 1) {
+            for (j = 1, lj = (this.mapWidth - 1); j < lj; j += 1) {
+                x = ((x + j) % (this.mapWidth - 2) + 1);    // whoa, nice :)
+                y = ((y + i) % (this.mapHeight - 2) + 1);    // whoa, nice :)
+                clean = true;
+
+                for (s = 0; s < ls; s += 1) {
+                    if ((x === this.snake[s][0]) && (y === this.snake[s][1])) {
+                        clean = false;
+                        break;
                     }
                 }
+
+                if (clean) {
+                    this.fruit[0] = x;
+                    this.fruit[1] = y;
+                    return ;
+                }
             }
-        } else {
-            fruit[0] = x;
-            fruit[1] = y;
         }
+    } else {
+        this.fruit[0] = x;
+        this.fruit[1] = y;
     }
-    // public API:
-    API.init = function () {
-        var i = 0;
-        movement = 'e';
-        fruit = [];
-        snake = [];
-        for (; i < CONF.initLength; i += 1) {
-            snake.push([CONF.initPosition[0] - i, CONF.initPosition[1]]);
-            //snake.push(CONF.initPosition); // this pushes the reference
-            //snake.push(Object.create(CONF.initPosition)); // this clones the object
-        }
-        moveFruit();
-    };
-    API.step = function () {
-        var tail = snake.length - 1;
-        moveSnake();
-        if (fruitCollected()) {
-            snake.push([snake[tail][0], snake[tail][1]]);
-            SCORE += CONF.ppf;
-            COLLECTED += 1;
-            moveFruit();
-        }
-        if (checkForColisions()) {
-            //GAME.end();
-            return false;
-        } else {
-            return true;
-        }
-    };
-    API.getSnake = function () {
-        return snake;
-    };
-    API.getFruit = function () {
-        return fruit;
-    };
-    return Object.freeze(API);
-} ());
+};
+
+Physics.prototype.init = function (initLength, initPosition) {
+    var i = 0;
+
+    this.movement = 'e';
+    this.fruit = [];
+    this.snake = [];
+
+    for (; i < initLength; i += 1) {
+        this.snake.push([initPosition[0] - i, initPosition[1]]);
+        //snake.push(CONF.initPosition); // this pushes the reference
+        //snake.push(Object.create(CONF.initPosition)); // this clones the object
+    }
+    this.moveFruit();
+};
+
+Physics.prototype.step = function () {
+    var tail = this.snake.length - 1;
+
+    this.moveSnake();
+
+    if (this.fruitCollected()) {
+        this.snake.push([snake[tail][0], snake[tail][1]]);
+        //SCORE += CONF.ppf;
+        //COLLECTED += 1;
+        // fire fruitCollectedEvent!
+        this.moveFruit();
+    }
+    if (this.checkForColisions()) {
+        // fire gameEndedEvent!
+    }
+};
