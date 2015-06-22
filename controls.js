@@ -58,7 +58,7 @@ Controls.createDefualts = function () {
     instance.bindings[37] = "w"; // left-arrow
     instance.bindings[39] = "e"; // right arrow
     instance.bindings[38] = "n"; // up arrow
-    instance.bindings[65] = "w"; // down arrow
+    instance.bindings[40] = "s"; // down arrow
     //instance.bindings[27] = function () {}; ESC key
     //instance.bindings[80] = function () {}; p key
 
