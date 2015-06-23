@@ -15,11 +15,11 @@ window.snake = (function () {
     // position to place snake at the begining; in tiles
     conf.initPosition = [Math.floor(conf.mapWidth / 2), Math.floor(conf.mapHeight / 2)];
     conf.ppf = 5;                   // points per fruit collected by snake
-    conf.speed = {current: 0, map: [250, 200, 150, 100, 50]};
+    conf.speed = {current: 2, map: [250, 200, 150, 100, 50, 0]};
 
     module.controls = Controls.createDefualts();
     module.graphics = new Graphics();
-    module.physics = new Physics();
+    module.physics = new Physics(conf.mapWidth, conf.mapHeight);
 
     /**
      *

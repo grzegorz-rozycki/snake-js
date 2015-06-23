@@ -58,7 +58,7 @@ Controls.createDefualts = function () {
     instance.actions.s = false;
     instance.actions.w = false;
 
-    instance.actionQueue = ['n', 'w', 's', 'e'];
+    instance.actionQueue = [];
 
     instance.bindings[65] = "w"; // a key
     instance.bindings[68] = "e"; // d key

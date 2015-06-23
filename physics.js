@@ -156,7 +156,7 @@ Physics.prototype.step = function (newMovement) {
     this.moveSnake(newMovement);
 
     if (this.fruitCollected()) {
-        this.snake.push([snake[tail][0], snake[tail][1]]);
+        this.snake.push([this.snake[tail][0], this.snake[tail][1]]);
         //SCORE += CONF.ppf;
         //COLLECTED += 1;
         // fire fruitCollectedEvent!
