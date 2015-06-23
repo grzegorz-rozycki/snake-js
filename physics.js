@@ -40,31 +40,31 @@ Physics.prototype.fruitCollected = function () {
     return (this.fruit[0] === this.snake[0][0] && this.fruit[1] === this.snake[0][1]);
 };
 
-Physics.prototype.getDirection = function () {
+Physics.prototype.getDirection = function (newMovement) {
 
-    if (this.actions.n && this.movement !== 's') {
+    if (newMovement === 'n' && this.movement !== 's') {
         return 'n';
     }
 
-    if (this.actions.e && this.movement !== 'w') {
+    if (newMovement === 'e' && this.movement !== 'w') {
         return 'e';
     }
 
-    if (this.actions.s && this.movement !== 'n') {
+    if (newMovement === 's' && this.movement !== 'n') {
         return 's';
     }
 
-    if (this.actions.w && this.movement !== 'e') {
+    if (newMovement === 'w' && this.movement !== 'e') {
         return 'w';
     }
 
     return this.movement;
 };
 
-Physics.prototype.moveSnake = function () {
+Physics.prototype.moveSnake = function (newMovement) {
     var i = (this.snake.length - 1);
 
-    this.movement = this.getDirection();
+    this.movement = this.getDirection(newMovement);
 
     for (; i > 0; i -= 1) {
         this.snake[i][0] = this.snake[i - 1][0];
@@ -150,10 +150,10 @@ Physics.prototype.init = function (initLength, initPosition) {
     this.moveFruit();
 };
 
-Physics.prototype.step = function () {
+Physics.prototype.step = function (newMovement) {
     var tail = this.snake.length - 1;
 
-    this.moveSnake();
+    this.moveSnake(newMovement);
 
     if (this.fruitCollected()) {
         this.snake.push([snake[tail][0], snake[tail][1]]);

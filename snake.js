@@ -29,17 +29,12 @@ window.snake = (function () {
 
         if (now - loop.lastAction >= loop.timeout) {
             loop.lastAction = now;
-            update();
+            module.physics.step(module.controls.getNextAction());
+            module.graphics.drawMap();
+            module.graphics.drawFruit(module.physics.fruit);
+            module.graphics.drawSnake(module.physics.snake);
         }
         loop.frameRequest = window.requestAnimationFrame(step);
-    }
-
-    function update() {
-        module.physics.actions = module.controls.actions;
-        module.physics.step();
-        module.graphics.drawMap();
-        module.graphics.drawFruit(module.physics.fruit);
-        module.graphics.drawSnake(module.physics.snake);
     }
 
     api.init = function () {
@@ -63,7 +58,7 @@ window.snake = (function () {
             handler.on = "up";
             module.controls.bindings["27"] = handler;
             // key event listeners
-            window.addEventListener("keydown", module.controls.keyDown.bind(module.controls));
+//            window.addEventListener("keydown", module.controls.keyDown.bind(module.controls));
             window.addEventListener("keyup", module.controls.keyUp.bind(module.controls));
 
             // physics

@@ -1,7 +1,8 @@
 'use strict';
 
 function Controls() {
-    this.actions = Object.create(null),   // action map: action map -> boolean value (does occure)
+    this.actions = Object.create(null),   // action fifo queue
+    this.actionQueue = [];
     this.bindings = Object.create(null);  // key kode to action bindings
 }
 
@@ -39,17 +40,25 @@ Controls.prototype.keyUp = function (event) {
             binding.action();
         } else if (binding in this.actions) {
             this.actions[binding] = false;
+            this.actionQueue.push(binding);
         }
     }
 };
+
+Controls.prototype.getNextAction = function () {
+    return this.actionQueue.shift();
+}
+
 
 Controls.createDefualts = function () {
     var instance = new Controls();
 
     instance.actions.n = false;
+    instance.actions.e = false;
     instance.actions.s = false;
     instance.actions.w = false;
-    instance.actions.e = false;
+
+    instance.actionQueue = ['n', 'w', 's', 'e'];
 
     instance.bindings[65] = "w"; // a key
     instance.bindings[68] = "e"; // d key
