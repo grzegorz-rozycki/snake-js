@@ -1,22 +1,25 @@
 'use strict';
 window.snake = (function () {
-    var api =  Object.create(null),
-        conf = Object.create(null),
-        isInitiated = false,
-        loop = Object.create(null),
-        module = Object.create(null),
-        score,
-        self = this;
+    var api = Object.create(null),    // public methods
+        conf = Object.create(null),   // configuration object
+        collected = 0,                // collected fruits count
+        isInitiated = false,          // is initiated flag
+        isOver = false,               // is game over flag
+        level = 1,                    // current level; used to get propper timeout, score per fruit
+        loop = Object.create(null),   // game loop control object; holds loop handle, last action time and timeout
+        module = Object.create(null), // holds reference to graphics, physics and controls modules
+        score = 0;                    // current score
 
-    conf.canvasSelector = '#canvas';     // id of canvas element to draw to
-    conf.tileSize = 20;             // size of tile in pixels
-    conf.mapHeight = 20;            // game map height in tiles; pixels = tileSize * mapHeight
-    conf.mapWidth = 40;             // game map width in tiles; pixels = tileSize * mapWidth
-    conf.initLength = 3;            // initial length of the snake in tiles
+    conf.canvasSelector = '#canvas'; // id of canvas element to draw to
+    conf.tileSize = 20;              // size of tile in pixels
+    conf.mapHeight = 20;             // game map height in tiles; pixels = tileSize * mapHeight
+    conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
+    conf.initLength = 3;             // initial length of the snake in tiles
     // position to place snake at the begining; in tiles
     conf.initPosition = [Math.floor(conf.mapWidth / 2), Math.floor(conf.mapHeight / 2)];
-    conf.ppf = 5;                   // points per fruit collected by snake
-    conf.speed = {current: 2, map: [250, 200, 150, 100, 50, 0]};
+    conf.pointMap = [1, 2, 5, 10, 15, 25];
+    conf.speedMap = [250, 200, 150, 100, 50, 0];
+    conf.levelMap = [1, 2, 5, 10, 500];
 
     module.controls = Controls.createDefualts();
     module.graphics = new Graphics();
@@ -24,26 +27,44 @@ window.snake = (function () {
 
 
     function collisionHandler() {
-        console.log("argh! colission!!!");
+        isOver = true;
+        api.stop();
+        console.log('game over man! you scored ' + score + ' pts.');
     }
 
     function collectionHandler() {
-        console.log("yupi! got one!!!");
+        collected += 1;
+        score += conf.pointMap[level];
+
+        // can increment level?
+        if ((conf.levelMap.length - 1) > level) {
+
+            if (collected >= conf.levelMap[level]) {
+                level += 1;
+                loop.timeout = conf.speedMap[level];
+                console.log('level up!');
+            }
+        }
+        
     }
     /**
      *
      */
     function step() {
-        var now = Date.now();
+        var now = null;
 
-        if (now - loop.lastAction >= loop.timeout) {
-            loop.lastAction = now;
-            module.physics.step(module.controls.getNextAction());
-            module.graphics.drawMap();
-            module.graphics.drawFruit(module.physics.fruit);
-            module.graphics.drawSnake(module.physics.snake);
+        if (!isOver) {
+            now = Date.now();
+
+            if (now - loop.lastAction >= loop.timeout) {
+                loop.lastAction = now;
+                module.physics.step(module.controls.getNextAction());
+                module.graphics.drawMap();
+                module.graphics.drawFruit(module.physics.fruit);
+                module.graphics.drawSnake(module.physics.snake);
+            }
+            loop.frameRequest = window.requestAnimationFrame(step);
         }
-        loop.frameRequest = window.requestAnimationFrame(step);
     }
 
     api.init = function () {
@@ -53,7 +74,7 @@ window.snake = (function () {
             // loop configuration
             loop.frameRequest = null;
             loop.lastAction = 0;
-            loop.timeout = conf.speed.map[conf.speed.current];
+            loop.timeout = conf.speedMap[level];
             // ESC key action handler
             handler = new Controls.Handler();
             handler.action = function () {
@@ -86,7 +107,7 @@ window.snake = (function () {
     };
 
     api.start = function () {
-        if (!loop.frameRequest) {
+        if (!isOver && !loop.frameRequest) {
             loop.frameRequest = window.requestAnimationFrame(step);
         }
     };
