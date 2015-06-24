@@ -5,7 +5,8 @@ window.snake = (function () {
         isInitiated = false,
         loop = Object.create(null),
         module = Object.create(null),
-        score;
+        score,
+        self = this;
 
     conf.canvasSelector = '#canvas';     // id of canvas element to draw to
     conf.tileSize = 20;             // size of tile in pixels
@@ -21,6 +22,14 @@ window.snake = (function () {
     module.graphics = new Graphics();
     module.physics = new Physics(conf.mapWidth, conf.mapHeight);
 
+
+    function collisionHandler() {
+        console.log("argh! colission!!!");
+    }
+
+    function collectionHandler() {
+        console.log("yupi! got one!!!");
+    }
     /**
      *
      */
@@ -58,8 +67,7 @@ window.snake = (function () {
             handler.on = "up";
             module.controls.bindings["27"] = handler;
             // key event listeners
-//            window.addEventListener("keydown", module.controls.keyDown.bind(module.controls));
-            window.addEventListener("keyup", module.controls.keyUp.bind(module.controls));
+            document.addEventListener("keyup", module.controls.keyUp.bind(module.controls));
 
             // physics
             module.physics.init(conf.initLength, conf.initPosition);
@@ -69,6 +77,10 @@ window.snake = (function () {
             module.graphics.mapWidth = conf.mapWidth;
             module.graphics.mapHeight = conf.mapHeight;
             module.graphics.init(conf.canvasSelector);
+
+            // bind phisics observers
+            module.physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
+            module.physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
             isInitiated = true;
         }
     };

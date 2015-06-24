@@ -1,12 +1,62 @@
 'use strict';
 
 function Physics(mapWidth, mapHeight) {
+    this.handlers = Object.create(null);
     this.actions = null;
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
     this.fruit = null,
     this.movement = null,
     this.snake = null;
+
+    this.handlers[Physics.COLLISION_EVENT] = [];
+    this.handlers[Physics.COLLECTION_EVENT] = [];
+}
+
+Physics.COLLISION_EVENT = 'COLLISION_EVENT';
+Physics.COLLECTION_EVENT = 'COLLECTION_EVENT';
+
+Physics.prototype.addHandler = function (eventType, handler) {
+
+    if (eventType in this.handlers && handler instanceof Function) {
+        this.handlers[eventType].push(handler);
+        return true;
+    }
+
+    return false;
+}
+
+Physics.prototype.removeHandler = function (eventType, handler) {
+    var index;
+
+    if (eventType in this.handlers) {
+        if ((index = this.handlers[eventType].indexOf(handler)) != -1) {
+            this.handlers[eventType].splice(index, 1);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+Physics.prototype.purgeHandlers = function (eventType) {
+
+    if (eventType in this.handlers) {
+        this.handlers[eventType] = [];
+
+        return true;
+    }
+
+    return false;
+}
+
+Physics.prototype.callHandlers = function (eventType) {
+
+    if (eventType in this.handlers) {
+        this.handlers[eventType].forEach(function (o) { o.call(); });
+    }
+
 }
 
 Physics.prototype.checkForColisions = function () {
@@ -157,12 +207,10 @@ Physics.prototype.step = function (newMovement) {
 
     if (this.fruitCollected()) {
         this.snake.push([this.snake[tail][0], this.snake[tail][1]]);
-        //SCORE += CONF.ppf;
-        //COLLECTED += 1;
-        // fire fruitCollectedEvent!
         this.moveFruit();
+        this.callHandlers(Physics.COLLECTION_EVENT);
     }
     if (this.checkForColisions()) {
-        // fire gameEndedEvent!
+        this.callHandlers(Physics.COLLISION_EVENT);
     }
 };
