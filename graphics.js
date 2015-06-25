@@ -9,10 +9,17 @@ function Graphics() {
     this.fruitColor = '#FE1506',
     this.snakeColor = '#2D9424',
     this.textColor = '#FFF';
+    this.isPulsing = false;
+    this.alphaMask = 1;
+    this.alphaDesc = true;
+    this.alphaStep = 0.03;
 }
 
 Graphics.prototype.init = function (canvasSelector) {
     this.ctx = document.querySelector(canvasSelector).getContext('2d');
+    this.isPulsing = false;
+    this.alphaMask = 1;
+    this.alphaDesc = true;
 };
 
 Graphics.prototype.drawTile = function (x, y) {
@@ -30,7 +37,13 @@ Graphics.prototype.drawSnake = function (body) {
         l = null;
     this.ctx.save();
     this.ctx.fillStyle = this.snakeColor;
-    for (i = 0, l = body.length, op = .3 / l; i < l; i += 1) {
+
+    if (this.isPulsing) {
+        this.adjustAlpha();
+        this.ctx.globalAlpha *= this.alphaMask;
+    }
+
+    for (i = 0, l = body.length, op = .25 / l; i < l; i += 1) {
         this.drawTile(body[i][0], body[i][1]);
         this.ctx.globalAlpha -= op;
     }
@@ -76,14 +89,6 @@ Graphics.prototype.drawInfo = function () {
     this.ctx.restore();
 };
 
-//API.draw = function () {
-//    var fruit = PHYSICS.getFruit();
-//    drawMap();
-//    drawFriut(fruit[0], fruit[1]);
-//    drawSnake(PHYSICS.getSnake());
-//    drawInfo();
-//};
-//
 Graphics.prototype.write = function (text) {
     if (typeof text === "string") {
         ctx.save();
@@ -96,4 +101,20 @@ Graphics.prototype.write = function (text) {
         );
         ctx.restore();
     }
+};
+
+Graphics.prototype.adjustAlpha = function () {
+    this.alphaMask = this.alphaDesc
+            ? this.alphaMask - this.alphaStep
+            : this.alphaMask + this.alphaStep;
+
+    if (this.alphaMask <= 0) {
+        this.alphaDesc = false;
+        this.alphaMask = 0;
+    } else if (this.alphaMask >= 1) {
+        this.alphaDesc = true;
+        this.alphaMask = 1;
+    }
+    
+    
 };

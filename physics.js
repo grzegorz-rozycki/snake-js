@@ -1,6 +1,7 @@
 'use strict';
 
 function Physics(mapWidth, mapHeight) {
+    this.isOver = false;
     this.handlers = Object.create(null);
     this.actions = null;
     this.mapWidth = mapWidth;
@@ -203,6 +204,10 @@ Physics.prototype.init = function (initLength, initPosition) {
 Physics.prototype.step = function (newMovement) {
     var tail = this.snake.length - 1;
 
+    if (this.isOver) {
+        return;
+    }
+
     this.moveSnake(newMovement);
 
     if (this.fruitCollected()) {
@@ -212,5 +217,6 @@ Physics.prototype.step = function (newMovement) {
     }
     if (this.checkForColisions()) {
         this.callHandlers(Physics.COLLISION_EVENT);
+        this.isOver = true;
     }
 };

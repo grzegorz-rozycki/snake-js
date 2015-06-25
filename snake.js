@@ -28,7 +28,7 @@ window.snake = (function () {
 
     function collisionHandler() {
         isOver = true;
-        api.stop();
+        module.graphics.isPulsing = true;
         console.log('game over man! you scored ' + score + ' pts.');
     }
 
@@ -51,20 +51,16 @@ window.snake = (function () {
      *
      */
     function step() {
-        var now = null;
-
-        if (!isOver) {
-            now = Date.now();
-
-            if (now - loop.lastAction >= loop.timeout) {
-                loop.lastAction = now;
-                module.physics.step(module.controls.getNextAction());
-                module.graphics.drawMap();
-                module.graphics.drawFruit(module.physics.fruit);
-                module.graphics.drawSnake(module.physics.snake);
-            }
-            loop.frameRequest = window.requestAnimationFrame(step);
+        var now = Date.now();
+        
+        if (now - loop.lastAction >= loop.timeout) {
+            loop.lastAction = now;
+            module.physics.step(module.controls.getNextAction());
         }
+        module.graphics.drawMap();
+        module.graphics.drawFruit(module.physics.fruit);
+        module.graphics.drawSnake(module.physics.snake);
+        loop.frameRequest = window.requestAnimationFrame(step);
     }
 
     api.init = function () {
