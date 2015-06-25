@@ -2,26 +2,56 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Snake</title>
-        <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css">
     </head>
     <body>
-        <div id="head-wrapper"></div>
-        <div id="canvas-container" class="container">
-            <canvas id="canvas" width="800" height="400" tabindex="0">
+        <div class="container">
+          <div class="header clearfix">
+            <nav>
+              <ul class="nav nav-pills pull-right">
+                <li role="presentation" class="active"><a href="#">Play</a></li>
+                <li role="presentation"><a href="#">About</a></li>
+                <li role="presentation"><a href="#">Contact</a></li>
+              </ul>
+            </nav>
+            <h3 class="text-muted">SnakeJS</h3>
+          </div>
+          <div id="info" class="row">
+            <div id="score" class="col-xs-6">
+                Score
+            </div>
+            <div id="level" class="col-xs-6">
+                Level
+            </div>
+          </div>
+          <div id="canvas-wrapper" class="row">
+            <canvas id="canvas" width="800" height="400" tabindex="0" class="col-xs-12">
                 Your browser doesn't support the canvas element...
             </canvas>
+          </div>
+          <footer class="row">
+            <p class="col-xs-12">
+                Kudos go to Grzegorz Różycki<br>
+                <a href="https://github.com/grzegorz-rozycki">https://github.com/grzegorz-rozycki</a><br>
+                <a href="mailto:grozycki@op.pl">grozycki@op.pl</a>
+            </p>
+          </footer>
         </div>
-        <script type="text/javascript" src="controls.js"></script>
-        <script type="text/javascript" src="graphics.js"></script>
-        <script type="text/javascript" src="physics.js"></script>
-        <script type="text/javascript" src="snake.js"></script>
+
+        <script type="text/javascript" src="js/controls.js"></script>
+        <script type="text/javascript" src="js/graphics.js"></script>
+        <script type="text/javascript" src="js/physics.js"></script>
+        <script type="text/javascript" src="js/snake.js"></script>
         <script type="text/javascript">
             'use strict';
             window.onload = function () {
                snake.init();
                snake.start();
-	   }
+           }
         </script>
     </body>
 </html>

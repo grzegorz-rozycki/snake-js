@@ -11,7 +11,7 @@ window.snake = (function () {
         score = 0;                    // current score
 
     conf.canvasSelector = '#canvas'; // id of canvas element to draw to
-    conf.tileSize = 20;              // size of tile in pixels
+    conf.tileSize = 20;              // size of tile in pixels; this will be recalculated on init
     conf.mapHeight = 20;             // game map height in tiles; pixels = tileSize * mapHeight
     conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
     conf.initLength = 3;             // initial length of the snake in tiles
@@ -28,7 +28,7 @@ window.snake = (function () {
 
     function collisionHandler() {
         isOver = true;
-        api.stop();
+        module.graphics.isPulsing = true;
         console.log('game over man! you scored ' + score + ' pts.');
     }
 
@@ -51,40 +51,34 @@ window.snake = (function () {
      *
      */
     function step() {
-        var now = null;
-
-        if (!isOver) {
-            now = Date.now();
-
-            if (now - loop.lastAction >= loop.timeout) {
-                loop.lastAction = now;
-                module.physics.step(module.controls.getNextAction());
-                module.graphics.drawMap();
-                module.graphics.drawFruit(module.physics.fruit);
-                module.graphics.drawSnake(module.physics.snake);
-            }
-            loop.frameRequest = window.requestAnimationFrame(step);
+        var now = Date.now();
+        
+        if (now - loop.lastAction >= loop.timeout) {
+            loop.lastAction = now;
+            module.physics.step(module.controls.getNextAction());
         }
+        module.graphics.drawMap();
+        module.graphics.drawFruit(module.physics.fruit);
+        module.graphics.drawSnake(module.physics.snake);
+        loop.frameRequest = window.requestAnimationFrame(step);
     }
 
     api.init = function () {
-        var handler;
+        var canvas,
+            handler;
 
         if (!isInitiated) {
+            // determine tile size in pixels
+            canvas = document.querySelector(conf.canvasSelector);
+            conf.tileSize = Math.min(Math.round(canvas.width / conf.mapWidth),
+                    (Math.round(canvas.height / conf.mapHeight)));
             // loop configuration
             loop.frameRequest = null;
             loop.lastAction = 0;
             loop.timeout = conf.speedMap[level];
             // ESC key action handler
             handler = new Controls.Handler();
-            handler.action = function () {
-                if (api.isRunning()) {
-                    api.stop();
-                } else {
-                    api.start();
-                }
-            };
-
+            handler.action = api.toggle;
             handler.on = "up";
             module.controls.bindings["27"] = handler;
             // key event listeners
@@ -116,6 +110,14 @@ window.snake = (function () {
         if (loop.frameRequest) {
             window.cancelAnimationFrame(loop.frameRequest);
             loop.frameRequest = null;
+        }
+    };
+
+    api.toggle = function () {
+        if (api.isRunning()) {
+            api.stop();
+        } else {
+            api.start();
         }
     };
 

@@ -1,0 +1,11 @@
+.header {
+	border-bottom: solid 1px #aaa;
+}
+
+#canvas-wrapper {
+	margin-top: 10px;
+}
+
+footer {
+	text-align: center;
+}
