@@ -9,12 +9,32 @@
         <link rel="stylesheet" type="text/css" href="css/main.css">
     </head>
     <body>
-        <div id="head-wrapper"></div>
-        <div id="canvas-container" class="container">
-            <canvas id="canvas" width="800" height="400" tabindex="0">
+        <div class="container">
+          <div class="header clearfix">
+            <nav>
+              <ul class="nav nav-pills pull-right">
+                <li role="presentation" class="active"><a href="#">Play</a></li>
+                <li role="presentation"><a href="#">About</a></li>
+                <li role="presentation"><a href="#">Contact</a></li>
+              </ul>
+            </nav>
+            <h3 class="text-muted">SnakeJS</h3>
+          </div>
+
+          <div class="row">
+            <canvas id="canvas" width="800" height="400" tabindex="0" class="col-xs-12">
                 Your browser doesn't support the canvas element...
             </canvas>
+          </div>
+          <footer class="row">
+            <p class="col-xs-12">
+                Kudos go to Grzegorz Różycki<br>
+                <a href="https://github.com/grzegorz-rozycki">https://github.com/grzegorz-rozycki</a><br>
+                <a href="mailto:grozycki@op.pl">grozycki@op.pl</a>
+            </p>
+          </footer>
         </div>
+
         <script type="text/javascript" src="js/controls.js"></script>
         <script type="text/javascript" src="js/graphics.js"></script>
         <script type="text/javascript" src="js/physics.js"></script>
