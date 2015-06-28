@@ -6,7 +6,7 @@ window.snake = (function () {
         domElement = Object.create(null),
         isInitiated = false,          // is initiated flag
         isOver = false,               // is game over flag
-        level = 1,                    // current level; used to get propper timeout, score per fruit
+        level = 0,                    // current level; used to get propper timeout, score per fruit
         loop = Object.create(null),   // game loop control object; holds loop handle, last action time and timeout
         module = Object.create(null), // holds reference to graphics, physics and controls modules
         score = 0;                    // current score
@@ -22,9 +22,9 @@ window.snake = (function () {
     conf.initLength = 3;             // initial length of the snake in tiles
     // position to place snake at the begining; in tiles
     conf.initPosition = [Math.floor(conf.mapWidth / 2), Math.floor(conf.mapHeight / 2)];
-    conf.pointMap = [1, 2, 5, 10, 15, 25];
-    conf.speedMap = [250, 200, 150, 100, 50, 0];
-    conf.levelMap = [1, 2, 5, 10, 500];
+    conf.pointMap = [5, 7, 9, 12, 15, 20];     // points gained per fruit at each level
+    conf.speedMap = [200, 150, 100, 75, 50, 0];// movement timeout at each level
+    conf.levelMap = [10, 20, 50, 100, 250];    // one less than in point and speed maps! when to shange to higher level
 
     module.controls = Controls.createDefualts();
     module.graphics = new Graphics();
