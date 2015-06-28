@@ -49,6 +49,10 @@ Controls.prototype.getNextAction = function () {
     return this.actionQueue.shift();
 }
 
+Controls.prototype.hasBinding = function (keyCode) {
+    return (keyCode in this.bindings);
+};
+
 
 Controls.createDefualts = function () {
     var instance = new Controls();

@@ -63,6 +63,22 @@ window.snake = (function () {
         loop.frameRequest = window.requestAnimationFrame(step);
     }
 
+    function keyUpHandler(evt) {
+        if (module.controls.hasBinding(evt.keyCode)) {
+            module.controls.keyUp(evt);
+            evt.stopPropagation();
+            evt.preventDefault();
+        }
+    }
+    
+    function keyDownHandler(evt) {
+        if (module.controls.hasBinding(evt.keyCode)) {
+            evt.stopPropagation();
+            evt.preventDefault();
+        }
+    }
+    
+
     api.init = function () {
         var canvas,
             handler;
@@ -82,7 +98,8 @@ window.snake = (function () {
             handler.on = "up";
             module.controls.bindings["27"] = handler;
             // key event listeners
-            document.addEventListener("keyup", module.controls.keyUp.bind(module.controls));
+            document.addEventListener("keydown", keyDownHandler, false);
+            document.addEventListener("keyup", keyUpHandler, false);
 
             // physics
             module.physics.init(conf.initLength, conf.initPosition);
