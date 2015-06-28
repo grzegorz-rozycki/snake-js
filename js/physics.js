@@ -189,6 +189,7 @@ Physics.prototype.moveFruit = function () {
 Physics.prototype.init = function (initLength, initPosition) {
     var i = 0;
 
+    this.isOver = false;
     this.movement = 'e';
     this.fruit = [];
     this.snake = [];
