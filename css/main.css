@@ -1,11 +1,16 @@
 .header {
-	border-bottom: solid 1px #aaa;
+    border-bottom: solid 1px #aaa;
 }
 
-#canvas-wrapper {
-	margin-top: 10px;
+#info {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#score, #level, #status {
+    text-align: right;
 }
 
 footer {
-	text-align: center;
+    text-align: center;
 }

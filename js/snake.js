@@ -3,6 +3,7 @@ window.snake = (function () {
     var api = Object.create(null),    // public methods
         conf = Object.create(null),   // configuration object
         collected = 0,                // collected fruits count
+        domElement = Object.create(null),
         isInitiated = false,          // is initiated flag
         isOver = false,               // is game over flag
         level = 1,                    // current level; used to get propper timeout, score per fruit
@@ -10,7 +11,11 @@ window.snake = (function () {
         module = Object.create(null), // holds reference to graphics, physics and controls modules
         score = 0;                    // current score
 
-    conf.canvasSelector = '#canvas'; // id of canvas element to draw to
+    conf.selector = Object.create(null);
+    conf.selector.canvas = '#canvas';// id of canvas element to draw to
+    conf.selector.score = '#score';  // id of score label
+    conf.selector.level = '#level';  // id of level label
+    conf.selector.status = '#status';// id of status label
     conf.tileSize = 20;              // size of tile in pixels; this will be recalculated on init
     conf.mapHeight = 20;             // game map height in tiles; pixels = tileSize * mapHeight
     conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
@@ -29,12 +34,13 @@ window.snake = (function () {
     function collisionHandler() {
         isOver = true;
         module.graphics.isPulsing = true;
-        console.log('game over man! you scored ' + score + ' pts.');
+        writeToElement('status', 'Game over');
     }
 
     function collectionHandler() {
         collected += 1;
         score += conf.pointMap[level];
+        writeToElement('score', score);
 
         // can increment level?
         if ((conf.levelMap.length - 1) > level) {
@@ -42,7 +48,7 @@ window.snake = (function () {
             if (collected >= conf.levelMap[level]) {
                 level += 1;
                 loop.timeout = conf.speedMap[level];
-                console.log('level up!');
+                writeToElement('level', level + 1);
             }
         }
         
@@ -52,7 +58,7 @@ window.snake = (function () {
      */
     function step() {
         var now = Date.now();
-        
+
         if (now - loop.lastAction >= loop.timeout) {
             loop.lastAction = now;
             module.physics.step(module.controls.getNextAction());
@@ -77,7 +83,12 @@ window.snake = (function () {
             evt.preventDefault();
         }
     }
-    
+
+    function writeToElement(element, text) {
+        if (element in domElement) {
+            domElement[element].textContent = text;
+        }
+    }
 
     api.init = function () {
         var canvas,
@@ -85,9 +96,13 @@ window.snake = (function () {
 
         if (!isInitiated) {
             // determine tile size in pixels
-            canvas = document.querySelector(conf.canvasSelector);
+            canvas = document.querySelector(conf.selector.canvas);
             conf.tileSize = Math.min(Math.round(canvas.width / conf.mapWidth),
                     (Math.round(canvas.height / conf.mapHeight)));
+            // get needed DOM element reference
+            domElement.score = document.querySelector(conf.selector.score);
+            domElement.level = document.querySelector(conf.selector.level);
+            domElement.status = document.querySelector(conf.selector.status);
             // loop configuration
             loop.frameRequest = null;
             loop.lastAction = 0;
@@ -108,11 +123,14 @@ window.snake = (function () {
             module.graphics.tileSize = conf.tileSize;
             module.graphics.mapWidth = conf.mapWidth;
             module.graphics.mapHeight = conf.mapHeight;
-            module.graphics.init(conf.canvasSelector);
+            module.graphics.init(conf.selector.canvas);
 
             // bind phisics observers
             module.physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
             module.physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
+            // write initial score and level values
+            writeToElement('score', score);
+            writeToElement('level', level + 1);
             isInitiated = true;
         }
     };
@@ -120,6 +138,7 @@ window.snake = (function () {
     api.start = function () {
         if (!isOver && !loop.frameRequest) {
             loop.frameRequest = window.requestAnimationFrame(step);
+            writeToElement('status', 'Game running');
         }
     };
 
@@ -127,6 +146,7 @@ window.snake = (function () {
         if (loop.frameRequest) {
             window.cancelAnimationFrame(loop.frameRequest);
             loop.frameRequest = null;
+            writeToElement('status', 'Game paused');
         }
     };
 
