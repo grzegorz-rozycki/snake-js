@@ -16,6 +16,7 @@ window.snake = (function () {
     conf.selector.score = '#score';  // id of score label
     conf.selector.level = '#level';  // id of level label
     conf.selector.status = '#status';// id of status label
+    conf.selector.menu = '#menu-modal';
     conf.tileSize = 20;              // size of tile in pixels; this will be recalculated on init
     conf.mapHeight = 20;             // game map height in tiles; pixels = tileSize * mapHeight
     conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
@@ -150,16 +151,22 @@ window.snake = (function () {
         }
     };
 
-    api.toggle = function () {
-        if (api.isRunning()) {
-            api.stop();
-        } else {
-            api.start();
-        }
-    };
-
     api.isRunning = function () {
         return (loop.frameRequest !== null);
+    };
+    
+    api.toggle = function() {
+        if (api.isRunning()) {
+            api.stop();
+            $(conf.selector.menu).modal('show');
+            $(conf.selector.menu).on('hidden.bs.modal', function () {
+                // react to hide event by restarting the game
+                api.start();
+            });
+        } else {
+            api.start();
+            $(conf.selector.menu).modal('hide');
+        }
     };
 
     return Object.freeze(api);
