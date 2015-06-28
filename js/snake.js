@@ -129,9 +129,6 @@ window.snake = (function () {
             // bind phisics observers
             module.physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
             module.physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
-            // write initial score and level values
-            writeToElement('score', score);
-            writeToElement('level', level + 1);
             isInitiated = true;
         }
     };
@@ -140,6 +137,9 @@ window.snake = (function () {
         if (!isOver && !loop.frameRequest) {
             loop.frameRequest = window.requestAnimationFrame(step);
             writeToElement('status', 'Game running');
+            // write initial score and level values, put here for restart to work properly
+            writeToElement('score', score);
+            writeToElement('level', level + 1);
         }
     };
 
@@ -167,6 +167,11 @@ window.snake = (function () {
             api.start();
             $(conf.selector.menu).modal('hide');
         }
+    };
+
+    api.restart = function () {
+        module.physics.init(conf.initLength, conf.initPosition);
+        $(conf.selector.menu).modal('hide');  // will trigger api.start
     };
 
     return Object.freeze(api);
