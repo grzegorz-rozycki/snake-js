@@ -61,8 +61,7 @@ Physics.prototype.callHandlers = function (eventType) {
 }
 
 Physics.prototype.checkForColisions = function () {
-    var l = (this.snake.length - 1),
-        i = 1;
+    var i;
 
     // border collision
     if (
@@ -75,7 +74,7 @@ Physics.prototype.checkForColisions = function () {
     }
 
     // self collision
-    for (; i < l; i += 1) {
+    for (i = 1; i < this.snake.length; i += 1) {
         if (
             (this.snake[0][0] === this.snake[i][0]) &&
             (this.snake[0][1] === this.snake[i][1])
