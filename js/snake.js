@@ -18,7 +18,7 @@ window.snake = (function () {
     // position to place snake at the begining; in tiles
     conf.initPosition = [Math.floor(conf.mapWidth / 2), Math.floor(conf.mapHeight / 2)];
     conf.pointMap = [1, 2, 5, 10, 15, 25];
-    conf.speedMap = [250, 200, 150, 100, 50, 0];
+    conf.speedMap = [150, 140, 130, 120, 110, 100];
     conf.levelMap = [1, 2, 5, 10, 500];
 
     module.controls = Controls.createDefualts();
@@ -45,14 +45,14 @@ window.snake = (function () {
                 console.log('level up!');
             }
         }
-        
+
     }
     /**
      *
      */
     function step() {
         var now = Date.now();
-        
+
         if (now - loop.lastAction >= loop.timeout) {
             loop.lastAction = now;
             module.physics.step(module.controls.getNextAction());
