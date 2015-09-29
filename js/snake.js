@@ -21,11 +21,13 @@ window.snake = (function () {
     conf.mapHeight = 20;             // game map height in tiles; pixels = tileSize * mapHeight
     conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
     conf.initLength = 3;             // initial length of the snake in tiles
+
     // position to place snake at the begining; in tiles
     conf.initPosition = [Math.floor(conf.mapWidth / 2), Math.floor(conf.mapHeight / 2)];
-    conf.pointMap = [5, 7, 9, 12, 15, 20];     // points gained per fruit at each level
-    conf.speedMap = [200, 150, 100, 75, 50, 0];// movement timeout at each level
-    conf.levelMap = [10, 20, 50, 100, 250];    // one less than in point and speed maps! when to shange to higher level
+    conf.pointMap = [1, 2, 5, 10, 15, 25];
+    conf.speedMap = [150, 140, 130, 120, 110, 100];
+    conf.levelMap = [1, 2, 5, 10, 500];
+
 
     module.controls = Controls.createDefualts();
     module.graphics = new Graphics();
@@ -52,7 +54,7 @@ window.snake = (function () {
                 writeToElement('level', level + 1);
             }
         }
-        
+
     }
     /**
      *
@@ -77,7 +79,7 @@ window.snake = (function () {
             evt.preventDefault();
         }
     }
-    
+
     function keyDownHandler(evt) {
         if (module.controls.hasBinding(evt.keyCode)) {
             evt.stopPropagation();
@@ -154,7 +156,7 @@ window.snake = (function () {
     api.isRunning = function () {
         return (loop.frameRequest !== null);
     };
-    
+
     api.toggle = function() {
         if (api.isRunning()) {
             api.stop();
