@@ -112,7 +112,7 @@ window.snake = (function () {
             loop.timeout = conf.speedMap[level];
             // ESC key action handler
             handler = new Controls.Handler();
-            handler.action = api.toggle;
+            handler.action = api.toggleModal;
             handler.on = "up";
             module.controls.bindings["27"] = handler;
             // key event listeners
@@ -136,12 +136,11 @@ window.snake = (function () {
     };
 
     api.start = function () {
-        if (!isOver && !loop.frameRequest) {
+        if (!loop.frameRequest) {
             loop.frameRequest = window.requestAnimationFrame(step);
-            writeToElement('status', 'Game running');
-            // write initial score and level values, put here for restart to work properly
             writeToElement('score', score);
             writeToElement('level', level + 1);
+            (!isOver && writeToElement('status', 'Game running'));
         }
     };
 
@@ -149,7 +148,8 @@ window.snake = (function () {
         if (loop.frameRequest) {
             window.cancelAnimationFrame(loop.frameRequest);
             loop.frameRequest = null;
-            writeToElement('status', 'Game paused');
+
+            (!isOver && writeToElement('status', 'Game paused'));
         }
     };
 
@@ -160,16 +160,27 @@ window.snake = (function () {
     api.toggle = function() {
         if (api.isRunning()) {
             api.stop();
+        } else {
+            api.start();
+        }
+    };
+
+    api.toggleModal = function () {
+
+        if (($(conf.selector.menu).data('bs.modal') || {}).isShown) {
+            // hide
+            $(conf.selector.menu).modal('hide');
+            api.start();
+        } else {
+            // show modal
+            api.stop();
             $(conf.selector.menu).modal('show');
             $(conf.selector.menu).on('hidden.bs.modal', function () {
                 // react to hide event by restarting the game
                 api.start();
             });
-        } else {
-            api.start();
-            $(conf.selector.menu).modal('hide');
         }
-    };
+    }
 
     api.restart = function () {
         isOver = false;
