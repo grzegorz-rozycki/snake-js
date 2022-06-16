@@ -1,15 +1,15 @@
 'use strict';
 window.snake = (function () {
-    var api = Object.create(null),    // public methods
+    let api = Object.create(null),    // public methods
         conf = Object.create(null),   // configuration object
         collected = 0,                // collected fruits count
         domElement = Object.create(null),
         isInitiated = false,          // is initiated flag
         isOver = false,               // is game over flag
-        level = 0,                    // current level; used to get propper timeout, score per fruit
+        level = 0,                    // current level; used to get proper timeout, score per fruit
         loop = Object.create(null),   // game loop control object; holds loop handle, last action time and timeout
         module = Object.create(null), // holds reference to graphics, physics and controls modules
-        score = 0;                    // current score
+        score = 0                    // current score
 
     conf.selector = Object.create(null);
     conf.selector.canvas = '#canvas';// id of canvas element to draw to
@@ -23,12 +23,11 @@ window.snake = (function () {
     conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
     conf.initLength = 3;             // initial length of the snake in tiles
 
-    // position to place snake at the begining; in tiles
+    // position to place snake at the beginning; in tiles
     conf.initPosition = [Math.floor(conf.mapWidth / 2), Math.floor(conf.mapHeight / 2)];
     conf.pointMap = [1, 2, 5, 10, 15, 25];
     conf.speedMap = [150, 140, 130, 120, 110, 100];
     conf.levelMap = [1, 2, 5, 10, 500];
-
 
     module.controls = Controls.createDefualts();
     module.graphics = new Graphics();
@@ -60,12 +59,13 @@ window.snake = (function () {
     }
 
     function step() {
-        var now = Date.now();
+        const now = Date.now()
 
         if (now - loop.lastAction >= loop.timeout) {
             loop.lastAction = now;
             module.physics.step(module.controls.getNextAction());
         }
+
         module.graphics.drawMap();
         module.graphics.drawFruit(module.physics.fruit);
         module.graphics.drawSnake(module.physics.snake);
@@ -94,64 +94,69 @@ window.snake = (function () {
     }
 
     api.init = function () {
-        var canvas,
+        let canvas,
             handler;
 
-        if (!isInitiated) {
-            // determine tile size in pixels
-            canvas = document.querySelector(conf.selector.canvas);
-            conf.tileSize = Math.min(Math.round(canvas.width / conf.mapWidth),
-                (Math.round(canvas.height / conf.mapHeight)));
-            // get needed DOM element reference
-            domElement.curtain = document.querySelector(conf.selector.curtain);
-            domElement.score = document.querySelector(conf.selector.score);
-            domElement.level = document.querySelector(conf.selector.level);
-            domElement.status = document.querySelector(conf.selector.status);
-            // loop configuration
-            loop.frameRequest = null;
-            loop.lastAction = 0;
-            loop.timeout = conf.speedMap[level];
-            // ESC key action handler
-            handler = new Controls.Handler();
-            handler.action = api.toggleModal;
-            handler.on = "up";
-            module.controls.bindings["27"] = handler;
-            // key event listeners
-            document.addEventListener("keydown", keyDownHandler, false);
-            document.addEventListener("keyup", keyUpHandler, false);
-
-            // physics
-            module.physics.init(conf.initLength, conf.initPosition);
-
-            // graphics
-            module.graphics.tileSize = conf.tileSize;
-            module.graphics.mapWidth = conf.mapWidth;
-            module.graphics.mapHeight = conf.mapHeight;
-            module.graphics.init(conf.selector.canvas);
-
-            // bind phisics observers
-            module.physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
-            module.physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
-            isInitiated = true;
+        if (isInitiated) {
+            return;
         }
+
+        // determine tile size in pixels
+        canvas = document.querySelector(conf.selector.canvas);
+        conf.tileSize = Math.min(Math.round(canvas.width / conf.mapWidth),
+            (Math.round(canvas.height / conf.mapHeight)));
+        // get needed DOM element reference
+        domElement.curtain = document.querySelector(conf.selector.curtain);
+        domElement.score = document.querySelector(conf.selector.score);
+        domElement.level = document.querySelector(conf.selector.level);
+        domElement.status = document.querySelector(conf.selector.status);
+        // loop configuration
+        loop.frameRequest = null;
+        loop.lastAction = 0;
+        loop.timeout = conf.speedMap[level];
+        // ESC key action handler
+        handler = new Controls.Handler();
+        handler.action = api.toggleModal;
+        handler.on = "up";
+        module.controls.bindings['27'] = handler;
+        // key event listeners
+        document.addEventListener('keydown', keyDownHandler, false);
+        document.addEventListener('keyup', keyUpHandler, false);
+
+        // physics
+        module.physics.init(conf.initLength, conf.initPosition);
+
+        // graphics
+        module.graphics.tileSize = conf.tileSize;
+        module.graphics.mapWidth = conf.mapWidth;
+        module.graphics.mapHeight = conf.mapHeight;
+        module.graphics.init(conf.selector.canvas);
+
+        // bind physics observers
+        module.physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
+        module.physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
+        isInitiated = true;
     };
 
     api.start = function () {
-        if (!loop.frameRequest) {
-            loop.frameRequest = window.requestAnimationFrame(step);
-            writeToElement('score', score);
-            writeToElement('level', level + 1);
-            (!isOver && writeToElement('status', 'Game running'));
+        if (loop.frameRequest) {
+            return;
         }
+
+        loop.frameRequest = window.requestAnimationFrame(step);
+        writeToElement('score', score);
+        writeToElement('level', level + 1);
+        (!isOver && writeToElement('status', 'Game running'));
     };
 
     api.stop = function () {
-        if (loop.frameRequest) {
-            window.cancelAnimationFrame(loop.frameRequest);
-            loop.frameRequest = null;
-
-            (!isOver && writeToElement('status', 'Game paused'));
+        if (!loop.frameRequest) {
+            return;
         }
+
+        window.cancelAnimationFrame(loop.frameRequest);
+        loop.frameRequest = null;
+        (!isOver && writeToElement('status', 'Game paused'));
     };
 
     api.isRunning = function () {
@@ -167,7 +172,6 @@ window.snake = (function () {
     };
 
     api.toggleModal = function () {
-
         if (($(conf.selector.menu).data('bs.modal') || {}).isShown) {
             // hide
             $(conf.selector.menu).modal('hide');
