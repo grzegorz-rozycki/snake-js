@@ -28,7 +28,7 @@ window.snake = (function () {
     conf.speedMap = [150, 140, 130, 120, 110, 100];
     conf.levelMap = [1, 2, 5, 10, 500];
 
-    module.controls = Controls.createDefualts();
+    module.controls = Controls.createDefaults();
     module.graphics = new Graphics();
     module.physics = new Physics(conf.mapWidth, conf.mapHeight);
 
@@ -64,11 +64,20 @@ window.snake = (function () {
     }
 
     function step() {
-        const now = Date.now()
+        if (Date.now() - loop.lastAction >= loop.timeout) {
+            let actionsPerformed = 0;
 
-        if (now - loop.lastAction >= loop.timeout) {
-            loop.lastAction = now;
-            module.physics.step(module.controls.getNextAction());
+            // Do at least one physics step; but if there are more actions perform them immediately.
+            // This results in a smoother experience with the controls.
+            // Limit the amount of actions performed within a single loop step to 3 (it's unrealistic to hit this limit).
+            // Purge the actions list after this step, as we don't need the older actions to stack up.
+            do {
+                module.physics.step(module.controls.getNextAction());
+                actionsPerformed += 1;
+            } while (module.controls.hasNextAction() && actionsPerformed < 3);
+
+            module.controls.purgeActions();
+            loop.lastAction = Date.now();
         }
 
         module.graphics.drawMap();

@@ -1,7 +1,7 @@
 'use strict';
 
 function Controls() {
-    this.actions = Object.create(null),   // action fifo queue
+    this.actions = Object.create(null);   // action fifo queue
     this.actionQueue = [];
     this.bindings = Object.create(null);  // key kode to action bindings
 }
@@ -16,22 +16,19 @@ Controls.prototype.addBinding = function (action, keyCode) {
 };
 
 Controls.prototype.keyDown = function (event) {
-    var binding;
+    let binding
 
     if (event.keyCode in this.bindings) {
         binding = this.bindings[event.keyCode];
 
         if (binding instanceof Controls.Handler && binding.on === "down" && binding.action instanceof Function) {
             binding.action();
-        } else if (binding in this.actions) {
-            this.actions[binding] = true;
         }
-
     }
 };
 
 Controls.prototype.keyUp = function (event) {
-    var binding;
+    let binding
 
     if (event.keyCode in this.bindings) {
         binding = this.bindings[event.keyCode];
@@ -39,14 +36,21 @@ Controls.prototype.keyUp = function (event) {
         if (binding instanceof Controls.Handler && binding.on === "up" && binding.action instanceof Function) {
             binding.action();
         } else if (binding in this.actions) {
-            this.actions[binding] = false;
             this.actionQueue.push(binding);
         }
     }
 };
 
+Controls.prototype.hasNextAction = function () {
+    return this.actionQueue.length > 0;
+}
+
 Controls.prototype.getNextAction = function () {
     return this.actionQueue.shift();
+}
+
+Controls.prototype.purgeActions = function () {
+    return this.actionQueue = [];
 }
 
 Controls.prototype.hasBinding = function (keyCode) {
@@ -54,8 +58,8 @@ Controls.prototype.hasBinding = function (keyCode) {
 };
 
 
-Controls.createDefualts = function () {
-    var instance = new Controls();
+Controls.createDefaults = function () {
+    const instance = new Controls()
 
     instance.actions.n = false;
     instance.actions.e = false;
