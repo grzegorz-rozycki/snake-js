@@ -5,7 +5,70 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SnakeJs</title>
-  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    header {
+      border-bottom: solid 1px #aaa;
+    }
+
+    main {
+      width: 100vw;
+      margin: 16px auto;
+    }
+
+    footer {
+      text-align: center;
+    }
+
+    #info {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    #score, #level {
+      text-align: right;
+    }
+
+    #canvas-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .curtain {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media screen and (min-width: 768px) {
+      main {
+        width: 750px;
+      }
+    }
+
+    @media screen and (min-width: 1024px) {
+      main {
+        width: 800px;
+      }
+    }
+  </style>
 </head>
 <body>
 <main>
