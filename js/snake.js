@@ -36,7 +36,6 @@ window.snake = (function () {
 
     function collisionHandler() {
         isOver = true;
-        module.graphics.isPulsing = true;
         writeToElement('status', 'Game over');
         domElement.curtain.classList.remove('hidden');
     }
@@ -190,7 +189,6 @@ window.snake = (function () {
     api.restart = function () {
         isOver = false;
         loop.frameRequest = null;
-        module.graphics.isPulsing = false;
         module.physics.init(conf.initLength, conf.initPosition);
         $(conf.selector.menu).modal('hide');  // will trigger api.start
         domElement.curtain.classList.add('hidden');
