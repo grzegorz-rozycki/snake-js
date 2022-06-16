@@ -3,11 +3,10 @@
 function Physics(mapWidth, mapHeight) {
     this.isOver = false;
     this.handlers = Object.create(null);
-    this.actions = null;
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
-    this.fruit = null,
-    this.movement = null,
+    this.fruit = null;
+    this.movement = null;
     this.snake = null;
 
     this.handlers[Physics.COLLISION_EVENT] = [];
@@ -28,10 +27,10 @@ Physics.prototype.addHandler = function (eventType, handler) {
 }
 
 Physics.prototype.removeHandler = function (eventType, handler) {
-    var index;
+    let index;
 
     if (eventType in this.handlers) {
-        if ((index = this.handlers[eventType].indexOf(handler)) != -1) {
+        if ((index = this.handlers[eventType].indexOf(handler)) !== -1) {
             this.handlers[eventType].splice(index, 1);
 
             return true;
@@ -55,14 +54,14 @@ Physics.prototype.purgeHandlers = function (eventType) {
 Physics.prototype.callHandlers = function (eventType) {
 
     if (eventType in this.handlers) {
-        this.handlers[eventType].forEach(function (o) { o.call(); });
+        this.handlers[eventType].forEach(function (o) {
+            o.call();
+        });
     }
 
 }
 
-Physics.prototype.checkForColisions = function () {
-    var i;
-
+Physics.prototype.checkForCollisions = function () {
     // border collision
     if (
         this.snake[0][0] <= 0 ||
@@ -74,7 +73,7 @@ Physics.prototype.checkForColisions = function () {
     }
 
     // self collision
-    for (i = 1; i < this.snake.length; i += 1) {
+    for (let i = 1; i < this.snake.length; i += 1) {
         if (
             (this.snake[0][0] === this.snake[i][0]) &&
             (this.snake[0][1] === this.snake[i][1])
@@ -112,11 +111,9 @@ Physics.prototype.getDirection = function (newMovement) {
 };
 
 Physics.prototype.moveSnake = function (newMovement) {
-    var i = (this.snake.length - 1);
-
     this.movement = this.getDirection(newMovement);
 
-    for (; i > 0; i -= 1) {
+    for (let i = (this.snake.length - 1); i > 0; i -= 1) {
         this.snake[i][0] = this.snake[i - 1][0];
         this.snake[i][1] = this.snake[i - 1][1];
     }
@@ -140,29 +137,29 @@ Physics.prototype.moveSnake = function (newMovement) {
 };
 
 Physics.prototype.moveFruit = function () {
-    var x = Math.round(Math.random() * (this.mapWidth - 3) + 1),
+    let x = Math.round(Math.random() * (this.mapWidth - 3) + 1),
         y = Math.round(Math.random() * (this.mapHeight - 3) + 1),
         clean = true,
-        li = null,
-        lj = null,
-        ls = null,
-        s = null,
-        i = null,
-        j = null;
-    // check if random position is outsiede of snake body
+        li,
+        lj,
+        ls,
+        s,
+        i,
+        j;
+    // check if random position is outside of snake body
     for (s = 0, ls = this.snake.length; s < ls; s += 1) {
         if ((x === this.snake[s][0]) && (y === this.snake[s][1])) {
             clean = false;
             break;
         }
     }
-    // random point din't fit outside snake body
+    // random point didn't fit outside snake body
     // search for empty point, starting from x, y
     if (clean !== true) {
         for (i = 1, li = (this.mapHeight - 1); i < li; i += 1) {
             for (j = 1, lj = (this.mapWidth - 1); j < lj; j += 1) {
-                x = ((x + j) % (this.mapWidth - 2) + 1);    // whoa, nice :)
-                y = ((y + i) % (this.mapHeight - 2) + 1);    // whoa, nice :)
+                x = ((x + j) % (this.mapWidth - 2) + 1);
+                y = ((y + i) % (this.mapHeight - 2) + 1);
                 clean = true;
 
                 for (s = 0; s < ls; s += 1) {
@@ -175,7 +172,7 @@ Physics.prototype.moveFruit = function () {
                 if (clean) {
                     this.fruit[0] = x;
                     this.fruit[1] = y;
-                    return ;
+                    return;
                 }
             }
         }
@@ -186,14 +183,12 @@ Physics.prototype.moveFruit = function () {
 };
 
 Physics.prototype.init = function (initLength, initPosition) {
-    var i = 0;
-
     this.isOver = false;
     this.movement = 'e';
     this.fruit = [];
     this.snake = [];
 
-    for (; i < initLength; i += 1) {
+    for (let i = 0; i < initLength; i += 1) {
         this.snake.push([initPosition[0] - i, initPosition[1]]);
         //snake.push(CONF.initPosition); // this pushes the reference
         //snake.push(Object.create(CONF.initPosition)); // this clones the object
@@ -202,11 +197,11 @@ Physics.prototype.init = function (initLength, initPosition) {
 };
 
 Physics.prototype.step = function (newMovement) {
-    var tail = this.snake.length - 1;
-
     if (this.isOver) {
         return;
     }
+
+    const tail = this.snake.length - 1
 
     this.moveSnake(newMovement);
 
@@ -215,7 +210,8 @@ Physics.prototype.step = function (newMovement) {
         this.moveFruit();
         this.callHandlers(Physics.COLLECTION_EVENT);
     }
-    if (this.checkForColisions()) {
+
+    if (this.checkForCollisions()) {
         this.callHandlers(Physics.COLLISION_EVENT);
         this.isOver = true;
     }
