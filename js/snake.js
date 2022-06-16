@@ -17,6 +17,7 @@ window.snake = (function () {
     conf.selector.level = '#level';  // id of level label
     conf.selector.status = '#status';// id of status label
     conf.selector.menu = '#menu-modal';
+    conf.selector.curtain = '#game-over-curtain';
     conf.tileSize = 20;              // size of tile in pixels; this will be recalculated on init
     conf.mapHeight = 20;             // game map height in tiles; pixels = tileSize * mapHeight
     conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
@@ -38,6 +39,7 @@ window.snake = (function () {
         isOver = true;
         module.graphics.isPulsing = true;
         writeToElement('status', 'Game over');
+        domElement.curtain.classList.remove('hidden');
     }
 
     function collectionHandler() {
@@ -56,9 +58,7 @@ window.snake = (function () {
         }
 
     }
-    /**
-     *
-     */
+
     function step() {
         var now = Date.now();
 
@@ -101,8 +101,9 @@ window.snake = (function () {
             // determine tile size in pixels
             canvas = document.querySelector(conf.selector.canvas);
             conf.tileSize = Math.min(Math.round(canvas.width / conf.mapWidth),
-                    (Math.round(canvas.height / conf.mapHeight)));
+                (Math.round(canvas.height / conf.mapHeight)));
             // get needed DOM element reference
+            domElement.curtain = document.querySelector(conf.selector.curtain);
             domElement.score = document.querySelector(conf.selector.score);
             domElement.level = document.querySelector(conf.selector.level);
             domElement.status = document.querySelector(conf.selector.status);
@@ -157,7 +158,7 @@ window.snake = (function () {
         return (loop.frameRequest !== null);
     };
 
-    api.toggle = function() {
+    api.toggle = function () {
         if (api.isRunning()) {
             api.stop();
         } else {
@@ -188,7 +189,8 @@ window.snake = (function () {
         module.graphics.isPulsing = false;
         module.physics.init(conf.initLength, conf.initPosition);
         $(conf.selector.menu).modal('hide');  // will trigger api.start
+        domElement.curtain.classList.add('hidden');
     };
 
     return Object.freeze(api);
-} ());
+}());

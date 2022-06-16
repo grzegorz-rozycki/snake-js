@@ -115,6 +115,4 @@ Graphics.prototype.adjustAlpha = function () {
         this.alphaDesc = true;
         this.alphaMask = 1;
     }
-    
-    
 };

@@ -11,6 +11,28 @@
     text-align: right;
 }
 
+#canvas-wrapper {
+    position: relative;
+}
+
+#game-over-curtain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0 15px;
+
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+}
+
+
 footer {
     text-align: center;
 }

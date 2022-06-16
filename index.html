@@ -20,15 +20,14 @@
               </div>
               <div class="modal-body">
                 <p>
-                    <button type="button" class="btn btn-warning" onclick="snake.restart()">
+                    <button type="button" class="btn btn-warning" tabindex="0" onclick="snake.restart()">
                         Restart game
                     </button>
                     Your progress will be lost...
                 </p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-
+                <button type="button" class="btn btn-default"  tabindex="0" data-dismiss="modal">Close</button>
               </div>
             </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
@@ -58,6 +57,10 @@
             <canvas id="canvas" width="800" height="400" tabindex="0" class="col-xs-12">
                 Your browser doesn't support the canvas element...
             </canvas>
+            <div id="game-over-curtain" class="hidden">
+              <h2>GAME OVER</h2>
+              <p>Press ESC to continue...</p>
+            </div>
           </div>
           <footer class="row">
             <p class="col-xs-12">
