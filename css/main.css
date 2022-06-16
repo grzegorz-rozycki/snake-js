@@ -1,5 +1,18 @@
-.header {
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+header {
     border-bottom: solid 1px #aaa;
+}
+
+main {
+    width: 100vw;
+    margin: 16px auto;
+}
+
+footer {
+    text-align: center;
 }
 
 #info {
@@ -13,9 +26,10 @@
 
 #canvas-wrapper {
     position: relative;
+    display: inline-block;
 }
 
-#game-over-curtain {
+.curtain {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,13 +40,23 @@
     right: 0;
     bottom: 0;
     left: 0;
-    margin: 0 15px;
 
     background: rgba(0, 0, 0, 0.75);
     color: #fff;
 }
 
+.hidden {
+    display: none !important;
+}
 
-footer {
-    text-align: center;
+@media screen and (min-width: 768px){
+    main {
+        width: 750px;
+    }
+}
+
+@media screen and (min-width: 1024px){
+    main {
+        width: 800px;
+    }
 }

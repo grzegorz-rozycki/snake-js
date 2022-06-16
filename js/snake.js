@@ -15,9 +15,8 @@ window.snake = (function () {
     conf.selector.canvas = '#canvas';// id of canvas element to draw to
     conf.selector.score = '#score';  // id of score label
     conf.selector.level = '#level';  // id of level label
-    conf.selector.status = '#status';// id of status label
     conf.selector.menu = '#menu-modal';
-    conf.selector.curtain = '#game-over-curtain';
+    conf.selector.curtain = '.curtain';
     conf.tileSize = 20;              // size of tile in pixels; this will be recalculated on init
     conf.mapHeight = 20;             // game map height in tiles; pixels = tileSize * mapHeight
     conf.mapWidth = 40;              // game map width in tiles; pixels = tileSize * mapWidth
@@ -36,7 +35,6 @@ window.snake = (function () {
 
     function collisionHandler() {
         isOver = true;
-        writeToElement('status', 'Game over');
         domElement.curtain.classList.remove('hidden');
     }
 
@@ -108,15 +106,14 @@ window.snake = (function () {
         domElement.curtain = document.querySelector(conf.selector.curtain);
         domElement.score = document.querySelector(conf.selector.score);
         domElement.level = document.querySelector(conf.selector.level);
-        domElement.status = document.querySelector(conf.selector.status);
         // loop configuration
         loop.frameRequest = null;
         loop.lastAction = 0;
         loop.timeout = conf.speedMap[level];
         // ESC key action handler
         handler = new Controls.Handler();
-        handler.action = api.toggleModal;
-        handler.on = "up";
+        handler.action = api.toggle;
+        handler.on = 'up';
         module.controls.bindings['27'] = handler;
         // key event listeners
         document.addEventListener('keydown', keyDownHandler, false);
@@ -145,7 +142,6 @@ window.snake = (function () {
         loop.frameRequest = window.requestAnimationFrame(step);
         writeToElement('score', score);
         writeToElement('level', level + 1);
-        (!isOver && writeToElement('status', 'Game running'));
     };
 
     api.stop = function () {
@@ -155,7 +151,6 @@ window.snake = (function () {
 
         window.cancelAnimationFrame(loop.frameRequest);
         loop.frameRequest = null;
-        (!isOver && writeToElement('status', 'Game paused'));
     };
 
     api.isRunning = function () {
@@ -170,27 +165,10 @@ window.snake = (function () {
         }
     };
 
-    api.toggleModal = function () {
-        if (($(conf.selector.menu).data('bs.modal') || {}).isShown) {
-            // hide
-            $(conf.selector.menu).modal('hide');
-            api.start();
-        } else {
-            // show modal
-            api.stop();
-            $(conf.selector.menu).modal('show');
-            $(conf.selector.menu).on('hidden.bs.modal', function () {
-                // react to hide event by restarting the game
-                api.start();
-            });
-        }
-    }
-
     api.restart = function () {
         isOver = false;
         loop.frameRequest = null;
         module.physics.init(conf.initLength, conf.initPosition);
-        $(conf.selector.menu).modal('hide');  // will trigger api.start
         domElement.curtain.classList.add('hidden');
     };
 

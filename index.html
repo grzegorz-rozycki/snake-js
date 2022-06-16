@@ -4,74 +4,38 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Snake</title>
-  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <title>SnakeJS</title>
   <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 <body>
-<div id="menu-modal" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title">Game menu</h4>
-      </div>
-      <div class="modal-body">
-        <p>
-          <button type="button" class="btn btn-warning" tabindex="0" onclick="snake.restart()">
-            Restart game
-          </button>
-          Your progress will be lost...
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" tabindex="0" data-dismiss="modal">Close</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<div class="container">
-  <div class="header clearfix">
-    <h3 class="text-muted">SnakeJS</h3>
-  </div>
-  <div id="info" class="row">
-    <div class="col-xs-1">
-      Score
-    </div>
-    <div id="score" class="col-xs-3">
-      Score
-    </div>
-    <div class="col-xs-1">
-      Level
-    </div>
-    <div id="level" class="col-xs-3">
-      Level
-    </div>
-    <div id="status" class="col-xs-4">
-      status
-    </div>
-  </div>
-  <div id="canvas-wrapper" class="row">
-    <canvas id="canvas" width="800" height="400" tabindex="0" class="col-xs-12">
+<main>
+  <header>
+    <h1>SnakeJS</h1>
+  </header>
+  <table id="info">
+    <tr>
+      <th>Score</th>
+      <td id="score"></td>
+      <th>Level</th>
+      <td id="level"></td>
+    </tr>
+  </table>
+  <div id="canvas-wrapper">
+    <canvas id="canvas" width="800" height="400" tabindex="0">
       Your browser doesn't support the canvas element...
     </canvas>
-    <div id="game-over-curtain" class="hidden">
+    <div class="curtain hidden">
       <h2>GAME OVER</h2>
-      <p>Press ESC to continue...</p>
+      <p>Press ESC to restart...</p>
     </div>
   </div>
-  <footer class="row">
-    <p class="col-xs-12">
-      <a href="https://github.com/grzegorz-rozycki">https://github.com/grzegorz-rozycki</a>
+  <footer>
+    <p>
+      <a href="https://github.com/grzegorz-rozycki/snake">https://github.com/grzegorz-rozycki/snake</a>
     </p>
   </footer>
-</div>
+</main>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="
-        crossorigin="anonymous"></script>
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/controls.js"></script>
 <script type="text/javascript" src="js/graphics.js"></script>
 <script type="text/javascript" src="js/physics.js"></script>
