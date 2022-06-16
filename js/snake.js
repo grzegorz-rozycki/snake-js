@@ -55,6 +55,14 @@ window.snake = (function () {
 
     }
 
+    function escHandler() {
+        if (isOver) {
+            api.restart();
+        } else {
+            api.toggle();
+        }
+    }
+
     function step() {
         const now = Date.now()
 
@@ -90,6 +98,16 @@ window.snake = (function () {
         }
     }
 
+    function setupLevel() {
+        isOver = false;
+        level = 0;
+        score = 0;
+
+        loop.frameRequest = null;
+        loop.lastAction = 0;
+        loop.timeout = conf.speedMap[level];
+    }
+
     api.init = function () {
         let canvas,
             handler;
@@ -106,13 +124,9 @@ window.snake = (function () {
         domElement.curtain = document.querySelector(conf.selector.curtain);
         domElement.score = document.querySelector(conf.selector.score);
         domElement.level = document.querySelector(conf.selector.level);
-        // loop configuration
-        loop.frameRequest = null;
-        loop.lastAction = 0;
-        loop.timeout = conf.speedMap[level];
         // ESC key action handler
         handler = new Controls.Handler();
-        handler.action = api.toggle;
+        handler.action = escHandler;
         handler.on = 'up';
         module.controls.bindings['27'] = handler;
         // key event listeners
@@ -131,11 +145,14 @@ window.snake = (function () {
         // bind physics observers
         module.physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
         module.physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
+
+        setupLevel();
+
         isInitiated = true;
     };
 
     api.start = function () {
-        if (loop.frameRequest) {
+        if (api.isRunning()) {
             return;
         }
 
@@ -145,7 +162,7 @@ window.snake = (function () {
     };
 
     api.stop = function () {
-        if (!loop.frameRequest) {
+        if (!api.isRunning()) {
             return;
         }
 
@@ -170,6 +187,8 @@ window.snake = (function () {
         loop.frameRequest = null;
         module.physics.init(conf.initLength, conf.initPosition);
         domElement.curtain.classList.add('hidden');
+        setupLevel();
+        api.start();
     };
 
     return Object.freeze(api);
