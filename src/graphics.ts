@@ -1,4 +1,4 @@
-function Graphics() {
+export default function Graphics() {
     this.ctx = null;
     this.tileSize = 10;
     this.mapWidth = 100;

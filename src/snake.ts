@@ -1,5 +1,8 @@
-'use strict';
-window.snake = (function () {
+import Controls from './controls';
+import Graphics from './graphics';
+import Physics from './physics';
+
+export default (function () {
     let api = Object.create(null),    // public methods
         conf = Object.create(null),   // configuration object
         collected = 0,                // collected fruits count

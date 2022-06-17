@@ -1,6 +1,4 @@
-'use strict';
-
-function Physics(mapWidth, mapHeight) {
+export default function Physics(mapWidth, mapHeight) {
     this.isOver = false;
     this.handlers = Object.create(null);
     this.mapWidth = mapWidth;

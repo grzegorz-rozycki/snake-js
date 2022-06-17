@@ -1,6 +1,4 @@
-'use strict';
-
-function Controls() {
+export default function Controls() {
     this.actions = Object.create(null);   // action fifo queue
     this.actionQueue = [];
     this.bindings = Object.create(null);  // key kode to action bindings
