@@ -1,86 +1,70 @@
-export default function Controls() {
-    this.actions = Object.create(null);   // action fifo queue
-    this.actionQueue = [];
-    this.bindings = Object.create(null);  // key kode to action bindings
-}
+export default class Controls {
+    actions = Object.create(null);
+    // action fifo queue
+    actionQueue: string[] = [];
+    // key kode to action bindings
+    bindings: Record<number, string | Handler> = Object.create(null);
 
-Controls.prototype.addBinding = function (action, keyCode) {
-    if (action in this.actions) {
-        this.bindings[keyCode] = action;
-        return true;
-    } else {
-        return false;
-    }
-};
+    static createDefaults() {
+        const instance = new Controls()
 
-Controls.prototype.keyDown = function (event) {
-    let binding
+        instance.actions.n = false;
+        instance.actions.e = false;
+        instance.actions.s = false;
+        instance.actions.w = false;
 
-    if (event.keyCode in this.bindings) {
-        binding = this.bindings[event.keyCode];
+        instance.actionQueue = [];
 
-        if (binding instanceof Controls.Handler && binding.on === "down" && binding.action instanceof Function) {
-            binding.action();
+        instance.bindings[65] = "w"; // a key
+        instance.bindings[68] = "e"; // d key
+        instance.bindings[87] = "n"; // w key
+        instance.bindings[83] = "s"; // s key
+        instance.bindings[37] = "w"; // left-arrow
+        instance.bindings[39] = "e"; // right arrow
+        instance.bindings[38] = "n"; // up arrow
+        instance.bindings[40] = "s"; // down arrow
+        //instance.bindings[27] = function () {}; ESC key
+        //instance.bindings[80] = function () {}; p key
+
+        return instance;
+    };
+
+    keyUp(event: KeyboardEvent) {
+        if (!(event.keyCode in this.bindings)) {
+            return;
         }
-    }
-};
 
-Controls.prototype.keyUp = function (event) {
-    let binding
+        let binding: Handler | string = this.bindings[event.keyCode];
 
-    if (event.keyCode in this.bindings) {
-        binding = this.bindings[event.keyCode];
-
-        if (binding instanceof Controls.Handler && binding.on === "up" && binding.action instanceof Function) {
+        if (binding instanceof Handler) {
             binding.action();
         } else if (binding in this.actions) {
             this.actionQueue.push(binding);
         }
     }
-};
 
-Controls.prototype.hasNextAction = function () {
-    return this.actionQueue.length > 0;
+    hasNextAction(): boolean {
+        return this.actionQueue.length > 0;
+    }
+
+    getNextAction(): null | string {
+        return this.actionQueue.shift() ?? null;
+    }
+
+    purgeActions(): void {
+        this.actionQueue = [];
+    }
+
+    hasBinding(keyCode: number) {
+        return (keyCode in this.bindings);
+    }
+
+    registerHandler(keyCode: number, handler: Handler) {
+        this.bindings[keyCode] = handler;
+    }
 }
 
-Controls.prototype.getNextAction = function () {
-    return this.actionQueue.shift();
+export class Handler {
+    constructor(public readonly action: Function, public readonly on: string) {
+    }
 }
-
-Controls.prototype.purgeActions = function () {
-    return this.actionQueue = [];
-}
-
-Controls.prototype.hasBinding = function (keyCode) {
-    return (keyCode in this.bindings);
-};
-
-
-Controls.createDefaults = function () {
-    const instance = new Controls()
-
-    instance.actions.n = false;
-    instance.actions.e = false;
-    instance.actions.s = false;
-    instance.actions.w = false;
-
-    instance.actionQueue = [];
-
-    instance.bindings[65] = "w"; // a key
-    instance.bindings[68] = "e"; // d key
-    instance.bindings[87] = "n"; // w key
-    instance.bindings[83] = "s"; // s key
-    instance.bindings[37] = "w"; // left-arrow
-    instance.bindings[39] = "e"; // right arrow
-    instance.bindings[38] = "n"; // up arrow
-    instance.bindings[40] = "s"; // down arrow
-    //instance.bindings[27] = function () {}; ESC key
-    //instance.bindings[80] = function () {}; p key
-
-    return instance;
-};
-
-Controls.Handler = function () {
-    this.action = null;
-    this.on = null;
-};

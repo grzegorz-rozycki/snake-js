@@ -1,62 +1,77 @@
-export default function Graphics() {
-    this.ctx = null;
-    this.tileSize = 10;
-    this.mapWidth = 100;
-    this.mapHeight = 100;
-    this.backgroundColor = '#BDBDBD';
-    this.borderColor = '#424242';
-    this.fruitColor = '#FE1506';
-    this.snakeColor = '#2D9424';
-}
+export default class Graphics {
+    private readonly backgroundColor = '#BDBDBD';
+    private readonly borderColor = '#424242';
+    private readonly fruitColor = '#FE1506';
+    private readonly snakeColor = '#2D9424';
 
-Graphics.prototype.init = function (canvasSelector) {
-    this.ctx = document.querySelector(canvasSelector).getContext('2d');
-};
+    private context: CanvasRenderingContext2D;
 
-Graphics.prototype.drawTile = function (x, y) {
-    this.ctx.fillRect(
-        x * this.tileSize + 1,
-        y * this.tileSize + 1,
-        this.tileSize - 1,
-        this.tileSize - 1,
-    );
-};
+    constructor(
+        canvas: HTMLCanvasElement,
+        private tileSize: number = 10,
+        private mapWidth: number = 100,
+        private mapHeight: number = 100,
+    ) {
+        const context = canvas.getContext('2d');
 
-Graphics.prototype.drawSnake = function (body) {
-    this.ctx.save();
-    this.ctx.fillStyle = this.snakeColor;
+        if (null === context) {
+            throw new Error("Couldn't get 2D rendering context from canvas element");
+        }
 
-    for (const block of body) {
-        this.drawTile(block[0], block[1]);
+        this.context = context;
     }
 
-    this.ctx.restore();
-};
+    public draw(fruit: number[], snake: number[][]) {
+        this.drawMap();
+        this.drawFruit(fruit);
+        this.drawSnake(snake);
+    }
 
-Graphics.prototype.drawFruit = function (fruit) {
-    this.ctx.save();
-    this.ctx.fillStyle = this.fruitColor;
-    this.drawTile(fruit[0], fruit[1]);
-    this.ctx.restore();
-};
+    private drawSnake(body: number[][]) {
+        this.context.save();
+        this.context.fillStyle = this.snakeColor;
 
-Graphics.prototype.drawMap = function () {
-    this.ctx.save();
-    // borders
-    this.ctx.fillStyle = this.borderColor;
-    this.ctx.fillRect(
-        0,
-        0,
-        this.mapWidth * this.tileSize,
-        this.mapHeight * this.tileSize,
-    );
-    // background
-    this.ctx.fillStyle = this.backgroundColor;
-    this.ctx.fillRect(
-        this.tileSize,
-        this.tileSize,
-        (this.mapWidth - 2) * this.tileSize,
-        (this.mapHeight - 2) * this.tileSize,
-    );
-    this.ctx.restore();
-};
+        for (const block of body) {
+            this.drawTile(block[0], block[1]);
+        }
+
+        this.context.restore();
+    }
+
+    private drawFruit(fruit: number[]) {
+        this.context.save();
+        this.context.fillStyle = this.fruitColor;
+        this.drawTile(fruit[0], fruit[1]);
+        this.context.restore();
+    }
+
+    private drawMap() {
+        this.context.save();
+        // borders
+        this.context.fillStyle = this.borderColor;
+        this.context.fillRect(
+            0,
+            0,
+            this.mapWidth * this.tileSize,
+            this.mapHeight * this.tileSize,
+        );
+        // background
+        this.context.fillStyle = this.backgroundColor;
+        this.context.fillRect(
+            this.tileSize,
+            this.tileSize,
+            (this.mapWidth - 2) * this.tileSize,
+            (this.mapHeight - 2) * this.tileSize,
+        );
+        this.context.restore();
+    }
+
+    private drawTile(x: number, y: number): void {
+        this.context.fillRect(
+            x * this.tileSize + 1,
+            y * this.tileSize + 1,
+            this.tileSize - 1,
+            this.tileSize - 1,
+        );
+    }
+}

@@ -1,4 +1,4 @@
-import Controls from './controls';
+import Controls, {Handler} from './controls';
 import Graphics from './graphics';
 import Physics from './physics';
 
@@ -11,8 +11,10 @@ export default (function () {
         isOver = false,               // is game over flag
         level = 0,                    // current level; used to get proper timeout, score per fruit
         loop = Object.create(null),   // game loop control object; holds loop handle, last action time and timeout
-        module = Object.create(null), // holds reference to graphics, physics and controls modules
-        score = 0                    // current score
+        controls: Controls,
+        graphics: Graphics,
+        physics: Physics,
+        score = 0;                    // current score
 
     conf.selector = Object.create(null);
     conf.selector.canvas = '#canvas';// id of canvas element to draw to
@@ -31,11 +33,6 @@ export default (function () {
     conf.speedMap = [150, 140, 130, 120, 110, 100];
     conf.levelMap = [1, 2, 5, 10, 500];
 
-    module.controls = Controls.createDefaults();
-    module.graphics = new Graphics();
-    module.physics = new Physics(conf.mapWidth, conf.mapHeight);
-
-
     function collisionHandler() {
         isOver = true;
         domElement.curtain.classList.remove('hidden');
@@ -44,7 +41,7 @@ export default (function () {
     function collectionHandler() {
         collected += 1;
         score += conf.pointMap[level];
-        writeToElement('score', score);
+        writeToElement('score', String(score));
 
         // can increment level?
         if ((conf.levelMap.length - 1) > level) {
@@ -52,7 +49,7 @@ export default (function () {
             if (collected >= conf.levelMap[level]) {
                 level += 1;
                 loop.timeout = conf.speedMap[level];
-                writeToElement('level', level + 1);
+                writeToElement('level', String(level + 1));
             }
         }
 
@@ -75,36 +72,27 @@ export default (function () {
             // Limit the amount of actions performed within a single loop step to 3 (it's unrealistic to hit this limit).
             // Purge the actions list after this step, as we don't need the older actions to stack up.
             do {
-                module.physics.step(module.controls.getNextAction());
+                physics.step(controls.getNextAction());
                 actionsPerformed += 1;
-            } while (module.controls.hasNextAction() && actionsPerformed < 3);
+            } while (controls.hasNextAction() && actionsPerformed < 3);
 
-            module.controls.purgeActions();
+            controls.purgeActions();
             loop.lastAction = Date.now();
         }
 
-        module.graphics.drawMap();
-        module.graphics.drawFruit(module.physics.fruit);
-        module.graphics.drawSnake(module.physics.snake);
+        graphics.draw(physics.getFruit(), physics.getSnake());
         loop.frameRequest = window.requestAnimationFrame(step);
     }
 
-    function keyUpHandler(evt) {
-        if (module.controls.hasBinding(evt.keyCode)) {
-            module.controls.keyUp(evt);
+    function keyUpHandler(evt: KeyboardEvent) {
+        if (controls.hasBinding(evt.keyCode)) {
+            controls.keyUp(evt);
             evt.stopPropagation();
             evt.preventDefault();
         }
     }
 
-    function keyDownHandler(evt) {
-        if (module.controls.hasBinding(evt.keyCode)) {
-            evt.stopPropagation();
-            evt.preventDefault();
-        }
-    }
-
-    function writeToElement(element, text) {
+    function writeToElement(element: string, text: string) {
         if (element in domElement) {
             domElement[element].textContent = text;
         }
@@ -121,42 +109,34 @@ export default (function () {
     }
 
     api.init = function () {
-        let canvas,
-            handler;
-
         if (isInitiated) {
             return;
         }
 
         // determine tile size in pixels
-        canvas = document.querySelector(conf.selector.canvas);
+        const canvas = document.querySelector(conf.selector.canvas);
         conf.tileSize = Math.min(Math.round(canvas.width / conf.mapWidth),
             (Math.round(canvas.height / conf.mapHeight)));
         // get needed DOM element reference
         domElement.curtain = document.querySelector(conf.selector.curtain);
         domElement.score = document.querySelector(conf.selector.score);
         domElement.level = document.querySelector(conf.selector.level);
+
+        controls = Controls.createDefaults();
+        graphics = new Graphics(canvas, conf.tileSize, conf.mapWidth, conf.mapHeight);
+        physics = new Physics(conf.mapWidth, conf.mapHeight);
+
         // ESC key action handler
-        handler = new Controls.Handler();
-        handler.action = escHandler;
-        handler.on = 'up';
-        module.controls.bindings['27'] = handler;
+        controls.registerHandler(27, new Handler(escHandler, 'up'));
         // key event listeners
-        document.addEventListener('keydown', keyDownHandler, false);
         document.addEventListener('keyup', keyUpHandler, false);
 
         // physics
-        module.physics.init(conf.initLength, conf.initPosition);
-
-        // graphics
-        module.graphics.tileSize = conf.tileSize;
-        module.graphics.mapWidth = conf.mapWidth;
-        module.graphics.mapHeight = conf.mapHeight;
-        module.graphics.init(conf.selector.canvas);
+        physics.init(conf.initLength, conf.initPosition);
 
         // bind physics observers
-        module.physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
-        module.physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
+        physics.addHandler(Physics.COLLISION_EVENT, collisionHandler);
+        physics.addHandler(Physics.COLLECTION_EVENT, collectionHandler);
 
         setupLevel();
 
@@ -169,8 +149,8 @@ export default (function () {
         }
 
         loop.frameRequest = window.requestAnimationFrame(step);
-        writeToElement('score', score);
-        writeToElement('level', level + 1);
+        writeToElement('score', String(score));
+        writeToElement('level', String(level + 1));
     };
 
     api.stop = function () {
@@ -197,7 +177,7 @@ export default (function () {
     api.restart = function () {
         isOver = false;
         loop.frameRequest = null;
-        module.physics.init(conf.initLength, conf.initPosition);
+        physics.init(conf.initLength, conf.initPosition);
         domElement.curtain.classList.add('hidden');
         setupLevel();
         api.start();
